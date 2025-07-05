@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Export Tool</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="/static/styles.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><img src="/static/logo.png" alt="Mixtape Logo" style="height: 90px; margin-right: 12px; vertical-align: middle;">LMS Mixtape</h1>
+            <p>Export your favorite songs.</p>
+        </div>
+
+        <!-- Query Configuration -->
+        <div class="card">
+            <h2><span class="material-icons">search</span> Search Configuration</h2>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="rating">Minimum Rating</label>
+                        <div id="ratingPicker" class="rating-picker" style="display: flex; align-items: center; gap: 4px;"></div>
+                        <input type="hidden" id="rating" value="40">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="limit">Number of Songs</label>
+                        <input type="number" id="limit" class="form-control" value="10" min="1" max="500">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="excludeGenres">Exclude Genres (optional)</label>
+                        <input type="text" id="excludeGenres" class="form-control" value="Classic, Classical, Christmas, XMas" placeholder="Genre1, Genre2, Genre3">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="addedAfter">Added After (optional)</label>
+                        <input type="date" id="addedAfter" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="dynPsVal">Min Dynamic Played/Skipped Value (-100 to 100, 0 = ignore)</label>
+                        <input type="range" id="dynPsVal" class="form-control" value="0" min="-100" max="100" step="5" oninput="document.getElementById('dynPsValValue').textContent = this.value">
+                        <span id="dynPsValValue" style="margin-left: 10px; font-weight: bold;">0</span>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="albumLimit">Max Tracks per Album (0 = no limit)</label>
+                        <input type="range" id="albumLimit" class="form-control" value="0" min="0" max="3" step="1" oninput="document.getElementById('albumLimitValue').textContent = this.value">
+                        <span id="albumLimitValue" style="margin-left: 10px; font-weight: bold;">0</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="randomize" class="form-checkbox">
+                            <label for="randomize">Randomize results (instead of sorting by date added)</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button id="searchBtn" class="btn">
+                <span class="material-icons">search</span> Search Songs
+            </button>
+        </div>
+
+        <!-- Results -->
+        <div id="resultsCard" class="card" style="display: none;">
+            <h2><span class="material-icons">list</span> Search Results</h2>
+            <div id="stats" class="stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalSongs">0</div>
+                    <div class="stat-label">Total Songs</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="selectedSongs">0</div>
+                    <div class="stat-label">Selected</div>
+                </div>
+            </div>
+            
+            <div class="songs-container" id="songsContainer">
+                <!-- Songs will be populated here -->
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <button id="selectAllBtn" class="btn btn-secondary">
+                    <span class="material-icons">select_all</span> Select All
+                </button>
+                <button id="deselectAllBtn" class="btn btn-secondary">
+                    <span class="material-icons">clear_all</span> Deselect All
+                </button>
+            </div>
+        </div>
+
+        <!-- Export Options -->
+        <div id="exportCard" class="card" style="display: none;">
+            <h2><span class="material-icons">download</span> Export Options</h2>
+            
+            <!-- Export Format Section -->
+            <div class="export-section">
+                <h3><span class="material-icons">folder</span> Export Format</h3>
+                <div class="export-format">
+                    <div class="format-option">
+                        <input type="radio" id="formatFolder" name="exportFormat" value="folder" checked>
+                        <label for="formatFolder">Export to Folder</label>
+                    </div>
+                    <div class="format-option">
+                        <input type="radio" id="formatZip" name="exportFormat" value="zip">
+                        <label for="formatZip">Export as ZIP</label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- File Options Section -->
+            <div class="export-section">
+                <h3><span class="material-icons">settings</span> File Options</h3>
+                <div class="export-settings">
+                    <div class="checkbox-option">
+                        <input type="checkbox" id="renameFiles" class="form-checkbox" checked>
+                        <label for="renameFiles">Rename files to "Artist - Title" format</label>
+                    </div>
+                    <div class="checkbox-option">
+                        <input type="checkbox" id="embedCovers" class="form-checkbox" checked>
+                        <label for="embedCovers">Embed cover art into music files</label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Export Action Section -->
+            <div class="export-section">
+                <h3><span class="material-icons">play_arrow</span> Export Action</h3>
+                <button id="exportBtn" class="btn btn-success">
+                    <span class="material-icons">download</span> Export Selected Songs
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Floating Alerts Container -->
+    <div id="alerts" class="alert-container"></div>
+
+    <script src="/static/main.js"></script>
+</body>
+</html> 

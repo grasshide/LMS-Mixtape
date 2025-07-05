@@ -1,0 +1,46 @@
+
+![LMS Mixtape Logo](docs/dashboard.png)
+
+# LMS Mixtape
+
+A modern web interface for exporting music from your library based on data from the LMS (Lyrion Music Server) database. 
+
+The web interface allows you to:
+
+1. Query your LMS database for songs based on rating and other criteria
+2. Browse and select songs from the search results
+3. Export selected songs to a folder or ZIP file
+4. Download the exported ZIP file from the web interface
+
+Like LMS, this program will not alter your library in any way. Only the exported files are changed (if selected).
+
+
+## Additional features
+
+- by default the result is deterministic and will return the songs in the order they were added
+- to mix up the results the order can be set to random
+- covers can be embedded after exporting to a folder if a cover can be found
+- files can be renamed to a simple (artist - title) schema
+- a limit of songs per album can be set
+- genres can be excluded (e.g. Score, Classical, ...)
+- a data can be picked. only songs added after that date will be be returned
+- filter option for "dynamic played/skipped value" of the Alternative Play Count plugin 
+
+
+## Requirements
+
+- LMS >= v9.0 (https://lyrion.org/)
+- Ratings Light Plugin (https://github.com/AF-1/lms-ratingslight)
+- (optional) Alternative Play Count (https://github.com/AF-1/lms-alternativeplaycount)
+
+
+## Installation
+
+LMS Mixtape can most easily be installed/deployed as docker container. You can find the example docker compose under /docs/docker-compose.example. Currently builds the container locally.
+
+## Limitatitons
+- LMS Mixtape is not meant to be a tool to search for specific songs/albums
+- There is no security/authentication. I recommend not to use it locally or to use an authentication middleware (like authelia)
+
+## Screenshot
+![LMS Mixtape Screenshot](docs/screenshot.png)

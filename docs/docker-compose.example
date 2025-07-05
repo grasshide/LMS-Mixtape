@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  lms-mixtape:
+    build: .
+    container_name: lms-mixtape
+    environment:
+      - PUID=1000 #optional
+      - PGID=1000 #optional
+    volumes:
+      # lms config folder: this is where LMS stores its database
+      - /path/to/lms/config:/config:ro
+      # music library: must be mapped to the same directory as your lms instance (docker default is "/music")
+      - /path/to/music:/music:ro
+      # this is where the music is exported
+      - /path/to/exports:/exports:rw
+    ports:
+      - "5000:5000"
