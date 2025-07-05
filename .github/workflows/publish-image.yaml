@@ -1,0 +1,17 @@
+name: Publish image to Docker Hub 
+
+on:
+  [workflow_dispatch]
+
+jobs:
+  publish_image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: build 
+        run: docker build . --tag grasshide/lms-mixtape:latest
+      - name: publish
+        run: |
+          docker login -u grasshide -p ${{ secrets.DOCKER_HUB_TOKEN }}
+          docker push grasshide/lms-mixtape:latest
