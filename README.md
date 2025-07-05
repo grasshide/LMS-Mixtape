@@ -1,5 +1,5 @@
 
-![LMS Mixtape Logo](docs/dashboard.png)
+![LMS Mixtape Logo](static/favicon.svg)
 
 # LMS Mixtape
 
