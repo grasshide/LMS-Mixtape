@@ -36,9 +36,9 @@ Like LMS, this program will not alter your library in any way. Only the exported
 
 ## Installation
 
-LMS Mixtape can most easily be installed/deployed as docker container. You can find the example docker compose under /docs/docker-compose.example. Currently builds the container locally.
+LMS Mixtape can most easily be installed/deployed as a Docker container. You can find an example Docker Compose file with explanations [here](docs/docker-compose.example).
 
-## Limitatitons
+## Limitations
 - LMS Mixtape is not meant to be a tool to search for specific songs/albums
 - There is no security/authentication. I recommend not to use it locally or to use an authentication middleware (like authelia)
 
