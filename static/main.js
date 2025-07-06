@@ -190,19 +190,26 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to toggle embed covers checkbox visibility
     function toggleEmbedCoversVisibility() {
         const exportFormat = document.querySelector('input[name="exportFormat"]:checked').value;
-        const embedCoversContainer = document.querySelector('.export-settings');
+        const embedCoversCheckbox = document.getElementById('embedCovers');
+        const syncFolderCheckbox = document.getElementById('syncFolder');
         
         if (exportFormat === 'zip') {
             // Hide embed covers option for ZIP format
-            const embedCoversCheckbox = document.getElementById('embedCovers');
             if (embedCoversCheckbox) {
                 embedCoversCheckbox.closest('.checkbox-option').style.display = 'none';
             }
+            // Hide sync folder option for ZIP format
+            if (syncFolderCheckbox) {
+                syncFolderCheckbox.closest('.checkbox-option').style.display = 'none';
+            }
         } else {
             // Show embed covers option for folder format
-            const embedCoversCheckbox = document.getElementById('embedCovers');
             if (embedCoversCheckbox) {
                 embedCoversCheckbox.closest('.checkbox-option').style.display = 'flex';
+            }
+            // Show sync folder option for folder format
+            if (syncFolderCheckbox) {
+                syncFolderCheckbox.closest('.checkbox-option').style.display = 'flex';
             }
         }
     }
@@ -228,6 +235,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const exportFormat = document.querySelector('input[name="exportFormat"]:checked').value;
         const embedCovers = document.getElementById('embedCovers').checked;
         const renameFiles = document.getElementById('renameFiles').checked;
+        const syncFolder = document.getElementById('syncFolder').checked;
         const selectedSongsList = Array.from(selectedSongs).map(index => songs[index]);
         document.getElementById('exportBtn').disabled = true;
         document.getElementById('exportBtn').innerHTML = '<span class="material-icons rotating">refresh</span> Exporting...';
@@ -241,7 +249,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     songs: selectedSongsList,
                     format: exportFormat,
                     embed_covers: embedCovers,
-                    rename_files: renameFiles
+                    rename_files: renameFiles,
+                    sync_folder: syncFolder
                 })
             });
             const data = await response.json();

@@ -37,14 +37,13 @@ def create_target_filename(source_path, original_filename, rename_files=True):
     
     return target_filename
 
-def copy_songs(selected_songs, export_format='folder', embed_covers=True, rename_files=True):
+def copy_songs(selected_songs, export_format='folder', embed_covers=True, rename_files=True, sync_folder=False):
     """Copy selected songs to export directory"""
     if not os.path.exists(EXPORT_DIR):
         os.makedirs(EXPORT_DIR)
     
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    
     if export_format == 'zip':
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         zip_filename = f"music_export_{timestamp}.zip"
         zip_path = os.path.join(EXPORT_DIR, zip_filename)
         
@@ -64,7 +63,12 @@ def copy_songs(selected_songs, export_format='folder', embed_covers=True, rename
         return zip_path
     else:
         # Export to folder
-        export_folder = os.path.join(EXPORT_DIR, f"music_export_{timestamp}")
+        if sync_folder:
+            export_folder = os.path.join(EXPORT_DIR, "sync")
+        else:
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            export_folder = os.path.join(EXPORT_DIR, f"music_export_{timestamp}")
+        
         os.makedirs(export_folder, exist_ok=True)
         
         # Apply permissions to the export folder
