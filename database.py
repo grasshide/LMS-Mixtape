@@ -40,7 +40,7 @@ def query_songs(rating=40, limit=50, exclude_genres=None, dyn_ps_val=None, album
         params.append(dyn_ps_val)
     
     if added_before is not None:
-        base_conditions.append("tracks_persistent.added < ?")
+        base_conditions.append("tracks.timestamp < ?")
         params.append(added_before)
     
     where_clause = " AND ".join(base_conditions)
