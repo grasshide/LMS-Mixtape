@@ -116,11 +116,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const dynPsVal = parseInt(document.getElementById('dynPsVal').value);
         const albumLimit = parseInt(document.getElementById('albumLimit').value);
         const randomize = document.getElementById('randomize').checked;
-        const addedAfter = document.getElementById('addedAfter').value;
-        let addedAfterTimestamp = null;
-        if (addedAfter) {
+        const addedBefore = document.getElementById('addedBefore').value;
+        let addedBeforeTimestamp = null;
+        if (addedBefore) {
             // Convert YYYY-MM-DD to Unix timestamp (seconds)
-            addedAfterTimestamp = Math.floor(new Date(addedAfter + 'T00:00:00').getTime() / 1000);
+            addedBeforeTimestamp = Math.floor(new Date(addedBefore + 'T00:00:00').getTime() / 1000);
         }
         document.getElementById('dynPsValValue').textContent = dynPsVal;
         document.getElementById('albumLimitValue').textContent = albumLimit;
@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     dyn_ps_val: dynPsVal === 0 ? null : dynPsVal,
                     album_limit: albumLimit === 0 ? null : albumLimit,
                     randomize: randomize,
-                    added_after: addedAfterTimestamp
+                    added_before: addedBeforeTimestamp
                 })
             });
             const data = await response.json();

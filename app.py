@@ -26,9 +26,9 @@ def api_query():
         dyn_ps_val = data.get('dyn_ps_val')
         album_limit = data.get('album_limit')
         randomize = data.get('randomize', False)
-        added_after = data.get('added_after')
+        added_before = data.get('added_before')
         
-        songs = query_songs(rating, limit, exclude_genres, dyn_ps_val, album_limit, randomize, added_after)
+        songs = query_songs(rating, limit, exclude_genres, dyn_ps_val, album_limit, randomize, added_before)
         
         return jsonify({
             'success': True,

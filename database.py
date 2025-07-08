@@ -16,7 +16,7 @@ def get_db_connection():
     cur.execute(f"ATTACH DATABASE '{library_db}' AS persist")
     return con
 
-def query_songs(rating=40, limit=50, exclude_genres=None, dyn_ps_val=None, album_limit=None, randomize=False, added_after=None):
+def query_songs(rating=40, limit=50, exclude_genres=None, dyn_ps_val=None, album_limit=None, randomize=False, added_before=None):
     """Query songs from the LMS database"""
     
     con = get_db_connection()
@@ -39,9 +39,9 @@ def query_songs(rating=40, limit=50, exclude_genres=None, dyn_ps_val=None, album
         base_conditions.append("IFNULL(alternativeplaycount.dynPSval, 0) > ?")
         params.append(dyn_ps_val)
     
-    if added_after is not None:
-        base_conditions.append("tracks_persistent.added > ?")
-        params.append(added_after)
+    if added_before is not None:
+        base_conditions.append("tracks_persistent.added < ?")
+        params.append(added_before)
     
     where_clause = " AND ".join(base_conditions)
     

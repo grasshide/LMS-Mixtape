@@ -23,7 +23,7 @@ Like LMS, this program will not alter your library in any way. Only the exported
 - files can be renamed to a simple (artist - title) schema
 - a limit of songs per album can be set
 - genres can be excluded (e.g. Score, Classical, ...)
-- a data can be picked. only songs added after that date will be be returned
+- pick a date to rediscover your favorite songs added before that day
 - filter option for "dynamic played/skipped value" of the Alternative Play Count plugin
 - export to folder generates a new folder for each export or exports to a folder called "sync" (e.g. for syncthing)
 

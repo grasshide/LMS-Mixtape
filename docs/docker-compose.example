@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   lms-mixtape:
-    image: grasshide/lms-mixtape:latest
+    image: grasshide/lms-mixtape
     container_name: lms-mixtape
     environment:
       - PUID=1000 #optional
