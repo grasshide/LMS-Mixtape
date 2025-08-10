@@ -27,7 +27,7 @@ def query_songs(rating=40, limit=50, exclude_genres=None, dyn_ps_val=None, album
     has_alternativeplaycount = cur.fetchone() is not None
     
     # Build common conditions and parameters
-    base_conditions = ["audio = 1", "IFNULL(tracks_persistent.rating, 0) >= ?"]
+    base_conditions = ["audio = 1", "IFNULL(tracks_persistent.rating, 0) >= ?", "INSTR(tracks.url, '#') = 0"]
     params = [rating]
     
     if exclude_genres is not None:
