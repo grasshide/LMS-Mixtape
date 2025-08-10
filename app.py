@@ -102,7 +102,9 @@ def api_cover():
             else:
                 mimetype = 'image/jpeg'
             return send_file(str(cover_path), mimetype=mimetype)
-    abort(404, description='Cover image not found')
+    # Fallback to default cover image
+    default_cover = os.path.join('static', 'default-cover.png')
+    return send_file(default_cover, mimetype='image/png')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=False) 
