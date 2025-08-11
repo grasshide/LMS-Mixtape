@@ -332,12 +332,6 @@ body {
     stroke: white !important;
 }
 
-.song-checkbox {
-    margin-right: var(--mdc-spacing-2);
-    transform: scale(1.2);
-    accent-color: var(--mdc-theme-primary);
-}
-
 .song-info {
     flex: 1;
 }

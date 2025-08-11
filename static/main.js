@@ -49,8 +49,8 @@ function renderSongs() {
     songs.forEach((song, index) => {
         const songElement = document.createElement('div');
         songElement.className = `song-item ${selectedSongs.has(index) ? 'selected' : ''}`;
+        songElement.setAttribute('data-index', index);
         songElement.innerHTML = `
-            <input type="checkbox" class="song-checkbox" data-index="${index}" ${selectedSongs.has(index) ? 'checked' : ''}>
             <img class="song-cover" src="${song.cover_url}" alt="Cover" onerror="this.onerror=null;this.src='/static/default-cover.png';" style="width:48px;height:48px;object-fit:cover;margin-right:16px;border-radius:6px;box-shadow:0 2px 6px #0001;">
             <div class="song-info">
                 <div class="song-title">${song.title || 'Unknown Title'}</div>
@@ -161,19 +161,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    document.getElementById('songsContainer').addEventListener('change', (e) => {
-        if (e.target.classList.contains('song-checkbox')) {
-            const index = parseInt(e.target.dataset.index);
-            const songItem = e.target.closest('.song-item');
-            if (e.target.checked) {
-                selectedSongs.add(index);
-                songItem.classList.add('selected');
-            } else {
-                selectedSongs.delete(index);
-                songItem.classList.remove('selected');
-            }
-            updateStats();
+    document.getElementById('songsContainer').addEventListener('click', (e) => {
+        const songItem = e.target.closest('.song-item');
+        if (!songItem) return;
+        const index = parseInt(songItem.getAttribute('data-index'));
+        if (selectedSongs.has(index)) {
+            selectedSongs.delete(index);
+            songItem.classList.remove('selected');
+        } else {
+            selectedSongs.add(index);
+            songItem.classList.add('selected');
         }
+        updateStats();
     });
 
     document.getElementById('selectAllBtn').addEventListener('click', () => {
