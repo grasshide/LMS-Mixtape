@@ -574,6 +574,16 @@ body {
     accent-color: var(--mdc-theme-primary);
 }
 
+.song-cover {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    margin-right: 16px;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px #0001;
+    flex-shrink: 0;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .container {
@@ -611,15 +621,71 @@ body {
         gap: var(--mdc-spacing-2);
     }
     
+    /* Reflow song tile for mobile: use grid with larger cover and stacked text */
     .song-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: var(--mdc-spacing-1);
+        display: grid;
+        grid-template-columns: 72px 1fr;
+        grid-template-rows: auto auto;
+        column-gap: var(--mdc-spacing-2);
+        row-gap: 6px;
+        align-items: center;
     }
-    
+
+    .song-item:hover {
+        /* Avoid lateral shift on tap devices */
+        transform: none;
+    }
+
+    .song-cover {
+        width: 72px;
+        height: 72px;
+        margin-right: 0;
+        grid-column: 1;
+        grid-row: 1 / span 2;
+    }
+
+    .song-info {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+    .song-title {
+        font-size: 1.05rem;
+        margin-bottom: 4px;
+    }
+
+    .song-details {
+        font-size: 0.9rem;
+        line-height: 1.35;
+        word-break: break-word;
+        white-space: normal;
+    }
+
     .song-rating {
         margin-left: 0;
-        align-self: flex-end;
+        grid-column: 2;
+        grid-row: 2;
+        align-self: start;
+        justify-self: start;
+    }
+
+    .songs-container {
+        max-height: 65vh;
+        padding: 12px;
+    }
+}
+
+/* Very small phones */
+@media (max-width: 480px) {
+    .song-item {
+        grid-template-columns: 64px 1fr;
+    }
+    .song-cover {
+        width: 64px;
+        height: 64px;
+    }
+    .song-title {
+        font-size: 1rem;
     }
 }
 
@@ -715,16 +781,6 @@ body {
     .song-item:hover {
         background: #2d2d2d;
     }
-}
-
-.song-cover {
-    width: 48px;
-    height: 48px;
-    object-fit: cover;
-    margin-right: 16px;
-    border-radius: 6px;
-    box-shadow: 0 2px 6px #0001;
-    flex-shrink: 0;
 }
 
 .rating-picker {

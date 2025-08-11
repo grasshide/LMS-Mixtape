@@ -51,7 +51,7 @@ function renderSongs() {
         songElement.className = `song-item ${selectedSongs.has(index) ? 'selected' : ''}`;
         songElement.setAttribute('data-index', index);
         songElement.innerHTML = `
-            <img class="song-cover" src="${song.cover_url}" alt="Cover" onerror="this.onerror=null;this.src='/static/default-cover.png';" style="width:48px;height:48px;object-fit:cover;margin-right:16px;border-radius:6px;box-shadow:0 2px 6px #0001;">
+            <img class="song-cover" src="${song.cover_url}" alt="Cover" onerror="this.onerror=null;this.src='/static/default-cover.png';">
             <div class="song-info">
                 <div class="song-title">${song.title || 'Unknown Title'}</div>
                 <div class="song-details">
