@@ -487,6 +487,19 @@ body {
     box-shadow: var(--mdc-elevation-1);
 }
 
+/* Action buttons (Select/Deselect All) */
+.action-buttons {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.action-buttons .btn {
+    padding: 7px 12px;
+    min-height: 30px;
+}
+
 .stat-item {
     text-align: center;
     flex: 1;
@@ -673,19 +686,10 @@ body {
         max-height: 65vh;
         padding: 12px;
     }
-}
 
-/* Very small phones */
-@media (max-width: 480px) {
-    .song-item {
-        grid-template-columns: 64px 1fr;
-    }
-    .song-cover {
-        width: 64px;
-        height: 64px;
-    }
-    .song-title {
-        font-size: 1rem;
+    /* Ensure small space when action buttons stack vertically */
+    .action-buttons {
+        gap: 8px;
     }
 }
 
