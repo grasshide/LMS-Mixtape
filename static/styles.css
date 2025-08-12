@@ -785,6 +785,15 @@ body {
     .song-item:hover {
         background: #2d2d2d;
     }
+
+    /* Ensure selected items are visibly highlighted in dark mode, even on touch devices that may apply :hover */
+    .song-item.selected,
+    .song-item.selected:hover {
+        background: var(--mdc-theme-primary);
+        color: var(--mdc-theme-on-primary);
+        border-color: var(--mdc-theme-primary);
+        box-shadow: var(--mdc-elevation-4);
+    }
 }
 
 .rating-picker {
