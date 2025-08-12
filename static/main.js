@@ -27,17 +27,24 @@ function updateStats() {
     document.getElementById('selectedSongs').textContent = selectedSongs.size;
 }
 
-function renderStars(rating) {
+function renderStars(rating, idPrefix = '') {
     const fullStars = Math.floor(rating / 20);
     const halfStar = (rating % 20) >= 10 ? 1 : 0;
     let html = '';
     for (let i = 0; i < 5; i++) {
         if (i < fullStars) {
-            html += `<svg class="star" width="24" height="24" viewBox="0 0 24 24" fill="#6200ee" stroke="#6200ee" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><polygon points="12,2 15,9 22,9.3 17,14.1 18.5,21 12,17.8 5.5,21 7,14.1 2,9.3 9,9"/></svg>`;
+            html += `<svg class="star" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><polygon points="12,2 15,9 22,9.3 17,14.1 18.5,21 12,17.8 5.5,21 7,14.1 2,9.3 9,9"/></svg>`;
         } else if (i === fullStars && halfStar) {
-            html += `<svg class="star" width="24" height="24" viewBox="0 0 24 24"><defs><linearGradient id="half"><stop offset="50%" stop-color="#6200ee"/><stop offset="50%" stop-color="white" stop-opacity="0"/></linearGradient></defs><polygon points="12,2 15,9 22,9.3 17,14.1 18.5,21 12,17.8 5.5,21 7,14.1 2,9.3 9,9" fill="url(#half)" stroke="#6200ee" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+            const clipId = `half-clip-${idPrefix}-${i}`;
+            html += `<svg class="star" width="24" height="24" viewBox="0 0 24 24">
+                <defs>
+                    <clipPath id="${clipId}"><rect x="0" y="0" width="12" height="24"/></clipPath>
+                </defs>
+                <polygon points="12,2 15,9 22,9.3 17,14.1 18.5,21 12,17.8 5.5,21 7,14.1 2,9.3 9,9" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+                <polygon points="12,2 15,9 22,9.3 17,14.1 18.5,21 12,17.8 5.5,21 7,14.1 2,9.3 9,9" fill="currentColor" clip-path="url(#${clipId})"/>
+            </svg>`;
         } else {
-            html += `<svg class="star" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6200ee" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><polygon points="12,2 15,9 22,9.3 17,14.1 18.5,21 12,17.8 5.5,21 7,14.1 2,9.3 9,9"/></svg>`;
+            html += `<svg class="star" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><polygon points="12,2 15,9 22,9.3 17,14.1 18.5,21 12,17.8 5.5,21 7,14.1 2,9.3 9,9"/></svg>`;
         }
     }
     return html;
@@ -62,7 +69,7 @@ function renderSongs() {
                 </div>
             </div>
             <div class="song-rating">
-                <div class="rating-stars">${renderStars(song.rating)}</div>
+                <div class="rating-stars">${renderStars(song.rating, `song-${index}`)}</div>
             </div>
         `;
         container.appendChild(songElement);

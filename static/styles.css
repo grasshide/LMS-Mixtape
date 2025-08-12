@@ -312,6 +312,20 @@ body {
     box-shadow: var(--mdc-elevation-4);
 }
 
+/* Ensure stars take on the on-primary color when selected */
+.song-item.selected .rating-stars {
+    color: var(--mdc-theme-on-primary);
+}
+
+.song-item.selected .rating-stars svg.star polygon {
+    stroke: currentColor !important;
+}
+
+/* Ensure half-filled stars (rendered via clipPath) keep their fill on selection */
+.song-item.selected .rating-stars svg.star polygon[clip-path] {
+    fill: currentColor !important;
+}
+
 /* Full stars - change fill to white */
 .song-item.selected .rating-stars svg.star[fill="#6200ee"] {
     fill: white !important;
