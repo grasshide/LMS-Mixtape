@@ -357,6 +357,21 @@ body {
     font-size: var(--mdc-typography-subtitle1-font-size);
 }
 
+/* Small green marker when a song already exists in sync folder */
+.exists-marker {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.exists-marker .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #4caf50;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.15);
+}
+
 .song-details {
     font-size: var(--mdc-typography-body2-font-size);
     opacity: 0.8;

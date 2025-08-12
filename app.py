@@ -3,7 +3,7 @@ import pathlib
 from flask import Flask, render_template, request, jsonify, send_file, abort
 from config import SECRET_KEY, MAX_CONTENT_LENGTH, EXPORT_DIR
 from database import query_songs
-from export_utils import copy_songs
+from export_utils import copy_songs, create_target_filename
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = SECRET_KEY
@@ -29,6 +29,27 @@ def api_query():
         added_before = data.get('added_before')
         
         songs = query_songs(rating, limit, exclude_genres, dyn_ps_val, album_limit, randomize, added_before)
+
+        # Mark songs that already exist in the sync folder
+        sync_dir = os.path.join(EXPORT_DIR, "sync")
+        if os.path.isdir(sync_dir):
+            for song in songs:
+                exists = False
+                try:
+                    source_path = pathlib.Path(song['url'])
+                    # Check renamed filename variant (default export behavior)
+                    renamed_filename = create_target_filename(source_path, song['filename'], rename_files=True)
+                    renamed_path = os.path.join(sync_dir, renamed_filename)
+                    print(f"[DEBUG] Checking for file in sync folder: {renamed_path} (original: {song['filename']})")
+                    original_path = os.path.join(sync_dir, song['filename'])
+                    if os.path.isfile(renamed_path) or os.path.isfile(original_path):
+                        exists = True
+                except Exception:
+                    exists = False
+                song['exists_in_sync'] = exists
+        else:
+            for song in songs:
+                song['exists_in_sync'] = False
         
         return jsonify({
             'success': True,

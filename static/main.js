@@ -60,7 +60,10 @@ function renderSongs() {
         songElement.innerHTML = `
             <img class="song-cover" src="${song.cover_url}" alt="Cover" onerror="this.onerror=null;this.src='/static/default-cover.png';">
             <div class="song-info">
-                <div class="song-title">${song.title || 'Unknown Title'}</div>
+                <div class="song-title">
+                    ${song.title || 'Unknown Title'}
+                    ${song.exists_in_sync ? '<span class="exists-marker" title="Already in sync folder"><span class="dot"></span></span>' : ''}
+                </div>
                 <div class="song-details">
                     <strong>Artist:</strong> ${song.artist || 'Unknown Artist'} | 
                     <strong>Album:</strong> ${song.album || 'Unknown Album'} | 
