@@ -319,11 +319,12 @@ body {
 }
 
 /* Half stars - change the gradient and stroke to white */
-.song-item.selected .rating-stars svg.star[fill^="url(#half)"] {
+.song-item.selected .rating-stars svg.star polygon[fill^="url(#half)"] {
     stroke: white !important;
 }
 
-.song-item.selected .rating-stars svg.star[fill^="url(#half)"] defs linearGradient stop[stop-color="#6200ee"] {
+/* Make the colored half of the gradient white */
+.song-item.selected .rating-stars svg.star defs linearGradient#half stop:first-child {
     stop-color: white !important;
 }
 
