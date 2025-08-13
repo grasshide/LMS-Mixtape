@@ -64,11 +64,11 @@ function renderSongs() {
                     ${song.title || 'Unknown Title'}
                     ${song.exists_in_sync ? '<span class="exists-marker" title="Already in sync folder"><span class="dot"></span></span>' : ''}
                 </div>
-                <div class="song-details">
-                    <strong>Artist:</strong> ${song.artist || 'Unknown Artist'} | 
-                    <strong>Album:</strong> ${song.album || 'Unknown Album'} | 
-                    <strong>Genre:</strong> ${song.genre || 'Unknown Genre'}
-                    ${song.dyn_ps_val !== null && song.dyn_ps_val !== 0 ? ` | <strong>Dynamic Counter:</strong> ${song.dyn_ps_val}` : ''}
+                <div class="song-details" role="list">
+                    <span class="meta-item" role="listitem"><span class="meta-label">Artist</span><span class="meta-value">${song.artist || 'Unknown Artist'}</span></span>
+                    <span class="meta-item" role="listitem"><span class="meta-label">Album</span><span class="meta-value">${song.album || 'Unknown Album'}</span></span>
+                    <span class="meta-item" role="listitem"><span class="meta-label">Genre</span><span class="meta-value">${song.genre || 'Unknown Genre'}</span></span>
+                    ${song.dyn_ps_val !== null && song.dyn_ps_val !== 0 ? `<span class="meta-item" role="listitem"><span class="meta-label">Dynamic</span><span class="meta-value">${song.dyn_ps_val}</span></span>` : ''}
                 </div>
             </div>
             <div class="song-rating">

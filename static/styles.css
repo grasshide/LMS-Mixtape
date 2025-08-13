@@ -378,6 +378,45 @@ body {
     line-height: 1.4;
 }
 
+/* Structured meta layout for song details */
+.song-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+}
+
+.song-details .meta-item {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #f0f0f0;
+    border: 1px solid #e5e5e5;
+}
+
+.song-details .meta-label {
+    font-weight: 600;
+    font-size: 0.8em;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: #666;
+}
+
+.song-details .meta-value {
+    font-weight: 400;
+    color: inherit;
+}
+
+/* Improve contrast when a song is selected */
+.song-item.selected .song-details .meta-item {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.25);
+}
+.song-item.selected .song-details .meta-label {
+    color: var(--mdc-theme-on-primary);
+}
+
 .song-rating {
     display: flex;
     align-items: center;
@@ -630,7 +669,20 @@ body {
 /* Responsive Design */
 @media (max-width: 768px) {
     .container {
-        padding: var(--mdc-spacing-2);
+		padding: var(--mdc-spacing-1);
+    }
+    /* Give cards a bit more usable width on mobile with a tiny gutter */
+    .card {
+        padding: var(--mdc-spacing-3) var(--mdc-spacing-3);
+        margin-left: 0;
+        margin-right: 0;
+        border-radius: var(--mdc-shape-small);
+    }
+
+    /* Keep results card a bit wider than others on mobile */
+    #resultsCard.card {
+        padding-left: calc(var(--mdc-spacing-1) / 2);
+        padding-right: calc(var(--mdc-spacing-1) / 2);
     }
     
     .row {
@@ -666,9 +718,9 @@ body {
     
     /* Reflow song tile for mobile: use grid with larger cover and stacked text */
     .song-item {
-        display: grid;
-        grid-template-columns: 72px 1fr;
-        grid-template-rows: auto auto;
+		display: grid;
+		grid-template-columns: 96px 1fr;
+		grid-template-rows: auto auto;
         column-gap: var(--mdc-spacing-2);
         row-gap: 6px;
         align-items: center;
@@ -679,18 +731,18 @@ body {
         transform: none;
     }
 
-    .song-cover {
-        width: 72px;
-        height: 72px;
-        margin-right: 0;
-        grid-column: 1;
-        grid-row: 1 / span 2;
-    }
+	.song-cover {
+		width: 96px;
+		height: 96px;
+		margin-right: 0;
+		grid-column: 1;
+		grid-row: 1;
+	}
 
-    .song-info {
-        grid-column: 2;
-        grid-row: 1;
-    }
+	.song-info {
+		grid-column: 2;
+		grid-row: 1 / span 2;
+	}
 
     .song-title {
         font-size: 1.05rem;
@@ -704,17 +756,32 @@ body {
         white-space: normal;
     }
 
-    .song-rating {
-        margin-left: 0;
-        grid-column: 2;
-        grid-row: 2;
-        align-self: start;
-        justify-self: start;
+    /* On mobile, make meta items larger tap targets and allow full-width wrapping */
+    .song-details {
+        gap: 10px 12px;
     }
+    .song-details .meta-item {
+        padding: 6px 12px;
+        border-radius: 10px;
+    }
+
+	.song-rating {
+		margin-left: 0;
+		grid-column: 1;
+		grid-row: 2;
+		align-self: start;
+		justify-self: center;
+	}
 
     .songs-container {
         max-height: 65vh;
-        padding: 12px;
+        padding: 12px 8px;
+        /* Tiny gutter inside card */
+        margin-left: 0;
+        margin-right: 0;
+        border-left: 1px solid #e0e0e0;
+        border-right: 1px solid #e0e0e0;
+        border-radius: var(--mdc-shape-small);
     }
 
     /* Ensure small space when action buttons stack vertically */
@@ -823,6 +890,27 @@ body {
         color: var(--mdc-theme-on-primary);
         border-color: var(--mdc-theme-primary);
         box-shadow: var(--mdc-elevation-4);
+    }
+
+    /* Dark mode chips for song details */
+    .song-details .meta-item {
+        background: rgba(255, 255, 255, 0.06);
+        border-color: rgba(255, 255, 255, 0.14);
+    }
+    .song-details .meta-label {
+        color: rgba(255, 255, 255, 0.75);
+    }
+    .song-item.selected .song-details .meta-item {
+        background: rgba(255, 255, 255, 0.20);
+        border-color: rgba(255, 255, 255, 0.30);
+    }
+
+    /* Dark mode stats in results card */
+    .stats {
+        background: #2d2d2d;
+    }
+    .stat-label {
+        color: rgba(255, 255, 255, 0.75);
     }
 }
 
