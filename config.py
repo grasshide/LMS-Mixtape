@@ -8,3 +8,5 @@ PUID = os.environ.get('PUID')
 PGID = os.environ.get('PGID')
 SECRET_KEY = os.environ.get('SECRET_KEY', secrets.token_hex(32))
 MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max file size 
+COVER_MAX_SIZE = (256,256)
+COVER_QUALITY = 85

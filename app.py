@@ -1,7 +1,9 @@
 import os
 import pathlib
+import io
 from flask import Flask, render_template, request, jsonify, send_file, abort, Response
-from config import SECRET_KEY, MAX_CONTENT_LENGTH, EXPORT_DIR
+from PIL import Image, ImageOps
+from config import SECRET_KEY, MAX_CONTENT_LENGTH, EXPORT_DIR, COVER_MAX_SIZE, COVER_QUALITY
 from database import query_songs
 from export_utils import copy_songs, create_target_filename
 from audio_utils import extract_embedded_cover
@@ -118,16 +120,39 @@ def api_cover():
     for cover_name in ["cover.jpg", "cover.png", "cover.jpeg", "folder.jpg", "folder.png", "folder.jpeg"]:
         cover_path = parent_dir / cover_name
         if cover_path.is_file():
-            # Guess mimetype
-            if cover_name.endswith('.png'):
-                mimetype = 'image/png'
-            else:
-                mimetype = 'image/jpeg'
-            return send_file(str(cover_path), mimetype=mimetype)
+            try:
+                with Image.open(str(cover_path)) as img:
+                    img = ImageOps.exif_transpose(img)
+                    if img.mode not in ("RGB", "L"):
+                        img = img.convert("RGB")
+                    img.thumbnail(COVER_MAX_SIZE, Image.Resampling.LANCZOS)
+                    buf = io.BytesIO()
+                    img.save(buf, format='JPEG', quality=COVER_QUALITY, optimize=True, progressive=True)
+                    buf.seek(0)
+                resp = Response(buf.getvalue(), mimetype='image/jpeg')
+                resp.headers['Cache-Control'] = 'public, max-age=86400'
+                return resp
+            except Exception:
+                # Fallback to sending the original if resize fails
+                mimetype = 'image/png' if cover_name.endswith('.png') else 'image/jpeg'
+                return send_file(str(cover_path), mimetype=mimetype)
     # Try extracting embedded cover from the audio file
     img_bytes, mime = extract_embedded_cover(song_path)
     if img_bytes and mime:
-        return Response(img_bytes, mimetype=mime)
+        try:
+            with Image.open(io.BytesIO(img_bytes)) as img:
+                img = ImageOps.exif_transpose(img)
+                if img.mode not in ("RGB", "L"):
+                    img = img.convert("RGB")
+                img.thumbnail(COVER_MAX_SIZE, Image.Resampling.LANCZOS)
+                buf = io.BytesIO()
+                img.save(buf, format='JPEG', quality=COVER_QUALITY, optimize=True, progressive=True)
+                buf.seek(0)
+            resp = Response(buf.getvalue(), mimetype='image/jpeg')
+            resp.headers['Cache-Control'] = 'public, max-age=86400'
+            return resp
+        except Exception:
+            return Response(img_bytes, mimetype=mime)
     # Fallback to default cover image
     default_cover = os.path.join('static', 'default-cover.png')
     return send_file(default_cover, mimetype='image/png')
