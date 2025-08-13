@@ -75,6 +75,7 @@ def query_songs(rating=40, limit=50, exclude_genres=None, dyn_ps_val=None, album
             JOIN albums on tracks.album=albums.id
             {alternativeplaycount_join}
             WHERE {where_clause}
+            GROUP BY tracks.id
         )
         SELECT 
             url,
