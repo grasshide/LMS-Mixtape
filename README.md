@@ -43,7 +43,6 @@ LMS Mixtape can most easily be installed/deployed as a Docker container. You can
 ## Limitations
 - LMS Mixtape is not meant to be a tool to search for specific songs/albums
 - There is no security/authentication. I recommend using it locally or to with an authentication middleware (like authelia)
-- Covers are only shown (in the UI) if a cover file exists in the folder
 - Songs from cue files are ignored
 
 

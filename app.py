@@ -1,9 +1,10 @@
 import os
 import pathlib
-from flask import Flask, render_template, request, jsonify, send_file, abort
+from flask import Flask, render_template, request, jsonify, send_file, abort, Response
 from config import SECRET_KEY, MAX_CONTENT_LENGTH, EXPORT_DIR
 from database import query_songs
 from export_utils import copy_songs, create_target_filename
+from audio_utils import extract_embedded_cover
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = SECRET_KEY
@@ -123,6 +124,10 @@ def api_cover():
             else:
                 mimetype = 'image/jpeg'
             return send_file(str(cover_path), mimetype=mimetype)
+    # Try extracting embedded cover from the audio file
+    img_bytes, mime = extract_embedded_cover(song_path)
+    if img_bytes and mime:
+        return Response(img_bytes, mimetype=mime)
     # Fallback to default cover image
     default_cover = os.path.join('static', 'default-cover.png')
     return send_file(default_cover, mimetype='image/png')

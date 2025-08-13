@@ -1,5 +1,6 @@
 import os
 import pathlib
+import base64
 from mutagen.easyid3 import EasyID3
 from mutagen.flac import FLAC
 from mutagen import File
@@ -99,6 +100,61 @@ def has_embedded_cover(file_path):
     except Exception as e:
         print(f"Error checking embedded cover in {file_path}: {e}")
     return False
+
+def extract_embedded_cover(file_path):
+    """Extract embedded cover image bytes and mimetype from a music file.
+
+    Returns a tuple of (image_bytes, mimetype) or (None, None) if not found.
+    """
+    try:
+        if file_path.suffix == '.mp3':
+            audio = MP3(file_path, ID3=ID3)
+            if audio.tags:
+                # Prefer direct APIC frames if available
+                try:
+                    apic_frames = audio.tags.getall('APIC')  # type: ignore[attr-defined]
+                except Exception:
+                    apic_frames = []
+                if apic_frames:
+                    apic = apic_frames[0]
+                    mime = getattr(apic, 'mime', None) or 'image/jpeg'
+                    data = getattr(apic, 'data', None)
+                    if data:
+                        return data, mime
+                # Fallback: iterate over tag values and find an APIC instance
+                for tag in audio.tags.values():
+                    if isinstance(tag, APIC):
+                        mime = tag.mime or 'image/jpeg'
+                        return tag.data, mime
+        elif file_path.suffix == '.flac':
+            flac = FLAC(file_path)
+            # First try embedded pictures list
+            if hasattr(flac, 'pictures') and flac.pictures:
+                pic = flac.pictures[0]
+                mime = getattr(pic, 'mime', None) or 'image/jpeg'
+                return pic.data, mime
+            # Then try VorbisComment tags with common fields
+            if flac.tags:
+                if 'coverart' in flac.tags and flac.tags['coverart']:
+                    data_b64 = flac.tags['coverart'][0]
+                    try:
+                        img_bytes = base64.b64decode(data_b64)
+                        return img_bytes, 'image/jpeg'
+                    except Exception:
+                        pass
+                if 'metadata_block_picture' in flac.tags and flac.tags['metadata_block_picture']:
+                    try:
+                        from mutagen.flac import Picture
+                        data_b64 = flac.tags['metadata_block_picture'][0]
+                        pic = Picture()
+                        pic.parse(base64.b64decode(data_b64))
+                        mime = getattr(pic, 'mime', None) or 'image/jpeg'
+                        return pic.data, mime
+                    except Exception:
+                        pass
+    except Exception as e:
+        print(f"Error extracting embedded cover from {file_path}: {e}")
+    return None, None
 
 def embed_cover(source_path, target):
     """Embed cover art into music file if no cover is already embedded"""
