@@ -660,7 +660,7 @@ body {
     }
     
     .stats {
-        flex-direction: column;
+		flex-direction: row;
         gap: var(--mdc-spacing-2);
     }
     
