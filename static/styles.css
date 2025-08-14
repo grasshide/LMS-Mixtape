@@ -261,12 +261,15 @@ body {
 
 /* Songs Container */
 .songs-container {
-    max-height: 500px;
+    height: 50vh;
+    min-height: 200px;
+    max-height: 85vh;
     overflow-y: auto;
     border: 2px solid #e0e0e0;
     border-radius: var(--mdc-shape-small);
     padding: var(--mdc-spacing-2);
     background: #fafafa;
+    resize: vertical;
 }
 
 .songs-container::-webkit-scrollbar {
@@ -786,7 +789,10 @@ body {
 	}
 
     .songs-container {
-        max-height: 65vh;
+        height: 65vh;
+        min-height: 200px;
+        max-height: 85vh;
+        resize: vertical;
         padding: 12px 8px;
         /* Tiny gutter inside card */
         margin-left: 0;
