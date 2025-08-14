@@ -57,6 +57,10 @@ function renderSongs() {
         const songElement = document.createElement('div');
         songElement.className = `song-item ${selectedSongs.has(index) ? 'selected' : ''}`;
         songElement.setAttribute('data-index', index);
+        const numericRating = typeof song.rating === 'number' ? song.rating : parseFloat(song.rating || '0');
+        const rating0to5 = Math.min(5, Math.round((numericRating / 20) * 2) / 2);
+        const ratingLabel = Number.isInteger(rating0to5) ? String(rating0to5) : rating0to5.toFixed(1);
+        const ratingChipHtml = rating0to5 > 0 ? `<span class="rating-chip"><span class="material-icons">star</span>${ratingLabel}</span>` : '';
         songElement.innerHTML = `
             <img class="song-cover" src="${song.cover_url}" alt="Cover" onerror="this.onerror=null;this.src='/static/default-cover.png';">
             <div class="song-info">
@@ -72,7 +76,7 @@ function renderSongs() {
                 </div>
             </div>
             <div class="song-rating">
-                <div class="rating-stars">${renderStars(song.rating, `song-${index}`)}</div>
+                ${ratingChipHtml}
             </div>
         `;
         container.appendChild(songElement);

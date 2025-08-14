@@ -2,7 +2,7 @@
 
 /* Material Design Variables */
 :root {
-    --mdc-theme-primary: #6200ee;
+    --mdc-theme-primary: #6672d8;
     --mdc-theme-primary-variant: #3700b3;
     --mdc-theme-secondary: #03dac6;
     --mdc-theme-secondary-variant: #018786;
@@ -60,7 +60,7 @@
 
 body {
     font-family: var(--mdc-typography-font-family);
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #667eea 0%, #222b77 100%);
     min-height: 100vh;
     color: var(--mdc-theme-on-surface);
     line-height: 1.6;
@@ -159,6 +159,7 @@ body {
     color: var(--mdc-theme-on-surface);
     min-height: 48px;
     box-sizing: border-box;
+    accent-color: var(--mdc-theme-primary);
 }
 
 .form-control:focus {
@@ -170,6 +171,8 @@ body {
 .form-control:hover {
     border-color: #bdbdbd;
 }
+
+
 
 /* Material Buttons */
 .btn {
@@ -424,22 +427,27 @@ body {
     gap: var(--mdc-spacing-1);
 }
 
-.rating-stars {
-    color: var(--mdc-theme-primary);
-    margin-left: var(--mdc-spacing-1);
-    font-size: 16px;
-    line-height: 1;
-    letter-spacing: 1px;
-    display: flex;
+.rating-chip {
+    display: inline-flex;
     align-items: center;
-    gap: 2px;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: #f0f0f0;
+    border: 1px solid #e5e5e5;
+    color: var(--mdc-theme-primary);
+    font-weight: 600;
 }
 
-.rating-stars svg.star {
-    width: 20px;
-    height: 20px;
-    display: inline-block;
-    vertical-align: middle;
+.rating-chip .material-icons {
+    font-size: 18px;
+    line-height: 1;
+}
+
+.song-item.selected .rating-chip {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: var(--mdc-theme-on-primary);
 }
 
 /* Loading Animation */
@@ -657,8 +665,8 @@ body {
 }
 
 .song-cover {
-    width: 48px;
-    height: 48px;
+    width: 64px;
+    height: 64px;
     object-fit: cover;
     margin-right: 16px;
     border-radius: 6px;
@@ -903,6 +911,18 @@ body {
     .song-item.selected .song-details .meta-item {
         background: rgba(255, 255, 255, 0.20);
         border-color: rgba(255, 255, 255, 0.30);
+    }
+
+    /* Dark mode rating chip */
+    .rating-chip {
+        background: rgba(255, 255, 255, 0.06);
+        border-color: rgba(255, 255, 255, 0.14);
+        color: var(--mdc-theme-primary);
+    }
+    .song-item.selected .rating-chip {
+        background: rgba(255, 255, 255, 0.20);
+        border-color: rgba(255, 255, 255, 0.30);
+        color: var(--mdc-theme-on-primary);
     }
 
     /* Dark mode stats in results card */
