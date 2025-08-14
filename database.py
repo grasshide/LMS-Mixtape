@@ -76,6 +76,7 @@ def query_songs(rating=40, limit=50, exclude_genres=None, dyn_ps_val=None, album
                 tracks_persistent.rating,
                 tracks_persistent.added,
                 tracks_persistent.lastPlayed,
+                tracks.year as year,
                 albums.title as album_title,
                 {dynpsval_select},
                 ROW_NUMBER() OVER (PARTITION BY tracks.album ORDER BY {window_order}) as album_rank
@@ -98,6 +99,7 @@ def query_songs(rating=40, limit=50, exclude_genres=None, dyn_ps_val=None, album
             rating,
             added,
             lastPlayed,
+            year,
             album_title,
             dynPSval
         FROM ranked_tracks
@@ -126,6 +128,7 @@ def query_songs(rating=40, limit=50, exclude_genres=None, dyn_ps_val=None, album
             tracks_persistent.rating,
             tracks_persistent.added,
             tracks_persistent.lastPlayed,
+            tracks.year as year,
             albums.title,
             {dynpsval_select}
         FROM tracks
@@ -161,8 +164,9 @@ def query_songs(rating=40, limit=50, exclude_genres=None, dyn_ps_val=None, album
             'rating': row[4],
             'added': row[5],
             'last_played': row[6],
-            'album': row[7],
-            'dyn_ps_val': row[8],
+            'year': row[7],
+            'album': row[8],
+            'dyn_ps_val': row[9],
             'filename': os.path.basename(url),
             'cover_url': cover_url
         })

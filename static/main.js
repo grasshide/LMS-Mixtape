@@ -71,7 +71,7 @@ function renderSongs() {
                 <div class="song-details" role="list">
                     <span class="meta-item" role="listitem"><span class="meta-label">Artist</span><span class="meta-value">${song.artist || 'Unknown Artist'}</span></span>
                     <span class="meta-item" role="listitem"><span class="meta-label">Album</span><span class="meta-value">${song.album || 'Unknown Album'}</span></span>
-                    <span class="meta-item" role="listitem"><span class="meta-label">Genre</span><span class="meta-value">${song.genre || 'Unknown Genre'}</span></span>
+                    ${song.year ? `<span class="meta-item" role="listitem"><span class="meta-label">Year</span><span class="meta-value">${song.year}</span></span>` : ''}
                     ${song.dyn_ps_val !== null && song.dyn_ps_val !== 0 ? `<span class="meta-item" role="listitem"><span class="meta-label">Dynamic</span><span class="meta-value">${song.dyn_ps_val}</span></span>` : ''}
                 </div>
             </div>
