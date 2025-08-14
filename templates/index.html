@@ -67,9 +67,18 @@
             <div class="row">
                 <div class="col">
                     <div class="form-group">
+                        <label>Order By</label>
+                        <div class="checkbox-option" role="radiogroup" aria-label="Order By">
+                            <input type="radio" id="orderByAdded" name="orderBy" value="added" class="form-checkbox" checked>
+                            <label for="orderByAdded">Last Added</label>
+                        </div>
                         <div class="checkbox-option">
-                            <input type="checkbox" id="randomize" class="form-checkbox">
-                            <label for="randomize">Randomize results (instead of sorting by date added)</label>
+                            <input type="radio" id="orderByLastPlayed" name="orderBy" value="last_played" class="form-checkbox">
+                            <label for="orderByLastPlayed">Last Played</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="radio" id="orderByRandom" name="orderBy" value="random" class="form-checkbox">
+                            <label for="orderByRandom">Random</label>
                         </div>
                     </div>
                 </div>

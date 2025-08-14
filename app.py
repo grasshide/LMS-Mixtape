@@ -28,10 +28,10 @@ def api_query():
         exclude_genres = data.get('exclude_genres', [])
         dyn_ps_val = data.get('dyn_ps_val')
         album_limit = data.get('album_limit')
-        randomize = data.get('randomize', False)
+        order_by = data.get('order_by', 'added')
         added_before = data.get('added_before')
         
-        songs = query_songs(rating, limit, exclude_genres, dyn_ps_val, album_limit, randomize, added_before)
+        songs = query_songs(rating, limit, exclude_genres, dyn_ps_val, album_limit, order_by, added_before)
 
         # Mark songs that already exist in the sync folder
         sync_dir = os.path.join(EXPORT_DIR, "sync")

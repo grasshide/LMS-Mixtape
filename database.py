@@ -16,7 +16,7 @@ def get_db_connection():
     cur.execute(f"ATTACH DATABASE '{library_db}' AS persist")
     return con
 
-def query_songs(rating=40, limit=50, exclude_genres=None, dyn_ps_val=None, album_limit=None, randomize=False, added_before=None):
+def query_songs(rating=40, limit=50, exclude_genres=None, dyn_ps_val=None, album_limit=None, order_by='added', added_before=None):
     """Query songs from the LMS database"""
     
     con = get_db_connection()
@@ -45,10 +45,22 @@ def query_songs(rating=40, limit=50, exclude_genres=None, dyn_ps_val=None, album
     
     where_clause = " AND ".join(base_conditions)
     
+    # Determine ordering
+    if order_by == 'random':
+        order_clause = "RANDOM()"
+    elif order_by == 'last_played':
+        # Sort by lastPlayed (tracks_persistent.lastPlayed), handling NULL/0 as lowest (last)
+        order_clause = "CASE WHEN IFNULL(tracks_persistent.lastPlayed, 0) = 0 THEN 1 ELSE 0 END, tracks_persistent.lastPlayed DESC"
+    else:
+        # Default to added time
+        order_clause = "tracks_persistent.added DESC"
+
     # Build query based on whether album limiting is enabled
     if album_limit is not None and album_limit > 0:
         # Use window function to limit tracks per album
-        order_clause = "RANDOM()" if randomize else "tracks_persistent.added DESC"
+        window_order = "RANDOM()" if order_by == 'random' else (
+            "CASE WHEN IFNULL(tracks_persistent.lastPlayed, 0) = 0 THEN 1 ELSE 0 END, tracks_persistent.lastPlayed DESC" if order_by == 'last_played' else "tracks_persistent.added DESC"
+        )
         
         # Conditional JOIN for alternativeplaycount
         alternativeplaycount_join = "LEFT JOIN alternativeplaycount ON tracks.url = alternativeplaycount.url" if has_alternativeplaycount else ""
@@ -63,9 +75,10 @@ def query_songs(rating=40, limit=50, exclude_genres=None, dyn_ps_val=None, album
                 genres.name as genre,
                 tracks_persistent.rating,
                 tracks_persistent.added,
+                tracks_persistent.lastPlayed,
                 albums.title as album_title,
                 {dynpsval_select},
-                ROW_NUMBER() OVER (PARTITION BY tracks.album ORDER BY {order_clause}) as album_rank
+                ROW_NUMBER() OVER (PARTITION BY tracks.album ORDER BY {window_order}) as album_rank
             FROM tracks
             JOIN tracks_persistent ON tracks.url = tracks_persistent.url
             JOIN genre_track ON tracks.id = genre_track.track
@@ -84,17 +97,21 @@ def query_songs(rating=40, limit=50, exclude_genres=None, dyn_ps_val=None, album
             genre,
             rating,
             added,
+            lastPlayed,
             album_title,
             dynPSval
         FROM ranked_tracks
         WHERE album_rank <= ?
-        ORDER BY {'RANDOM()' if randomize else 'added DESC'}
+        ORDER BY {
+            'RANDOM()' if order_by == 'random' else (
+                'CASE WHEN IFNULL(lastPlayed, 0) = 0 THEN 1 ELSE 0 END, lastPlayed DESC' if order_by == 'last_played' else 'added DESC'
+            )
+        }
         LIMIT ?;
         '''
         params.extend([album_limit, limit])
     else:
         # Original query without album limiting
-        order_clause = "RANDOM()" if randomize else "tracks_persistent.added DESC"
         
         # Conditional JOIN for alternativeplaycount
         alternativeplaycount_join = "LEFT JOIN alternativeplaycount ON tracks.url = alternativeplaycount.url" if has_alternativeplaycount else ""
@@ -108,6 +125,7 @@ def query_songs(rating=40, limit=50, exclude_genres=None, dyn_ps_val=None, album
             genres.name as genre,
             tracks_persistent.rating,
             tracks_persistent.added,
+            tracks_persistent.lastPlayed,
             albums.title,
             {dynpsval_select}
         FROM tracks
@@ -142,8 +160,9 @@ def query_songs(rating=40, limit=50, exclude_genres=None, dyn_ps_val=None, album
             'genre': row[3],
             'rating': row[4],
             'added': row[5],
-            'album': row[6],
-            'dyn_ps_val': row[7],
+            'last_played': row[6],
+            'album': row[7],
+            'dyn_ps_val': row[8],
             'filename': os.path.basename(url),
             'cover_url': cover_url
         })

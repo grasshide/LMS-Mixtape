@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const excludeGenres = document.getElementById('excludeGenres').value.split(',').map(s => s.trim()).filter(s => s);
         const dynPsVal = parseInt(document.getElementById('dynPsVal').value);
         const albumLimit = parseInt(document.getElementById('albumLimit').value);
-        const randomize = document.getElementById('randomize').checked;
+        const orderBy = document.querySelector('input[name="orderBy"]:checked')?.value || 'added';
         const addedBefore = document.getElementById('addedBefore').value;
         let addedBeforeTimestamp = null;
         if (addedBefore) {
@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     exclude_genres: excludeGenres,
                     dyn_ps_val: dynPsVal === 0 ? null : dynPsVal,
                     album_limit: albumLimit === 0 ? null : albumLimit,
-                    randomize: randomize,
+                    order_by: orderBy,
                     added_before: addedBeforeTimestamp
                 })
             });

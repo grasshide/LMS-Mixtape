@@ -679,6 +679,10 @@ body {
     .container {
 		padding: var(--mdc-spacing-1);
     }
+    /* Add extra top space above the title on mobile */
+    .header {
+        margin-top: var(--mdc-spacing-3);
+    }
     /* Give cards a bit more usable width on mobile with a tiny gutter */
     .card {
         padding: var(--mdc-spacing-3) var(--mdc-spacing-3);
