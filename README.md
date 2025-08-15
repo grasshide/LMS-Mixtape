@@ -17,8 +17,10 @@ Like LMS, this program will not alter your library in any way. Only the exported
 
 ## Additional features
 
+- dark mode
+- dashboard [icon](static/favicon.svg)
 - by default the result is deterministic and will return the songs in the order they were added
-- to mix up the results the order can be set to random
+- to mix up the results the order can be set to random or last played
 - covers can be embedded after exporting to a folder if a cover can be found
 - files can be renamed to a simple (artist - title) schema
 - a limit of songs per album can be set
@@ -26,7 +28,7 @@ Like LMS, this program will not alter your library in any way. Only the exported
 - pick a date to rediscover your favorite songs added before that day
 - filter option for "dynamic played/skipped value" of the Alternative Play Count plugin
 - export to folder generates a new folder for each export or exports to a folder called "sync" (e.g. for syncthing)
-- queried songs will be marked by a green dot if they already exist in the sync folder
+- search results will be marked by a green dot if they already exist in the sync folder
 
 
 ## Requirements
