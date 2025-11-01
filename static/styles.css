@@ -63,7 +63,7 @@ body {
     background: linear-gradient(135deg, #667eea 0%, #222b77 100%);
     min-height: 100vh;
     color: var(--mdc-theme-on-surface);
-    line-height: 1.6;
+    line-height: 1.4;
 }
 
 /* Container */
@@ -107,7 +107,7 @@ body {
     background: var(--mdc-theme-surface);
     border-radius: var(--mdc-shape-medium);
     box-shadow: var(--mdc-elevation-4);
-    padding: var(--mdc-spacing-4);
+    padding: var(--mdc-spacing-2);
     margin-bottom: var(--mdc-spacing-4);
     transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -124,7 +124,6 @@ body {
     display: flex;
     align-items: center;
     gap: var(--mdc-spacing-1);
-    padding-bottom: var(--mdc-spacing-2);
     border-bottom: 1px solid #e0e0e0;
 }
 
@@ -135,12 +134,11 @@ body {
 
 /* Form Elements */
 .form-group {
-    margin-bottom: var(--mdc-spacing-3);
+    margin-bottom: var(--mdc-spacing-2);
 }
 
 .form-group label {
     display: block;
-    margin-bottom: var(--mdc-spacing-1);
     font-weight: 500;
     color: var(--mdc-theme-on-surface);
     font-size: var(--mdc-typography-subtitle2-font-size);
@@ -150,14 +148,12 @@ body {
 
 .form-control {
     width: 100%;
-    padding: var(--mdc-spacing-2) var(--mdc-spacing-2);
     border: 2px solid #e0e0e0;
     border-radius: var(--mdc-shape-small);
-    font-size: var(--mdc-typography-body1-font-size);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     background: var(--mdc-theme-surface);
     color: var(--mdc-theme-on-surface);
-    min-height: 48px;
+    min-height: 33px;
     box-sizing: border-box;
     accent-color: var(--mdc-theme-primary);
 }
@@ -179,7 +175,7 @@ body {
     background: var(--mdc-theme-primary);
     color: var(--mdc-theme-on-primary);
     border: none;
-    padding: var(--mdc-spacing-2) var(--mdc-spacing-3);
+    padding: var(--mdc-spacing-1) var(--mdc-spacing-2);
     border-radius: var(--mdc-shape-small);
     font-size: var(--mdc-typography-button-font-size);
     font-weight: 500;
@@ -252,7 +248,6 @@ body {
 .row {
     display: flex;
     gap: var(--mdc-spacing-3);
-    margin-bottom: var(--mdc-spacing-3);
 }
 
 .col {
@@ -837,7 +832,6 @@ body {
     display: flex;
     align-items: center;
     gap: var(--mdc-spacing-1);
-    padding: var(--mdc-spacing-1) 0;
 }
 
 .form-checkbox {
