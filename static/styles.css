@@ -1013,7 +1013,7 @@ body {
 @media (min-width: 1024px) {
     .main-layout {
         display: grid;
-        grid-template-columns: 1fr 2fr 1fr;
+        grid-template-columns: 3fr 4fr 3fr;
         gap: var(--mdc-spacing-2);
         align-items: stretch;
     }
