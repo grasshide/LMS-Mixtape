@@ -165,6 +165,7 @@ body {
     min-height: 33px;
     box-sizing: border-box;
     accent-color: var(--mdc-theme-primary);
+    padding-inline: 10px;
 }
 
 .form-control:focus {
@@ -1030,6 +1031,7 @@ body {
 
     .songs-container {
         overflow-y: auto;
-        max-height: 63vh;
+        height: auto; /* Allow height to be determined by flex-grow */
+        flex-grow: 1; /* Allow it to take available vertical space */
     }
 } 
