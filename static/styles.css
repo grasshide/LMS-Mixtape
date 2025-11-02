@@ -58,25 +58,34 @@
     box-sizing: border-box;
 }
 
+html, body {
+    min-height: 100vh;
+}
+
 body {
     font-family: var(--mdc-typography-font-family);
     background: linear-gradient(135deg, #667eea 0%, #222b77 100%);
     min-height: 100vh;
     color: var(--mdc-theme-on-surface);
     line-height: 1.4;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Container */
 .container {
-    max-width: 1200px;
+    /* max-width: 1200px; */
     margin: 0 auto;
-    padding: var(--mdc-spacing-3);
+    padding: var(--mdc-spacing-2);
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 }
 
 /* Header */
 .header {
     text-align: center;
-    margin-bottom: var(--mdc-spacing-5);
+    margin-bottom: var(--mdc-spacing-2);
     color: var(--mdc-theme-on-primary);
 }
 
@@ -110,6 +119,8 @@ body {
     padding: var(--mdc-spacing-2);
     margin-bottom: var(--mdc-spacing-4);
     transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
 }
 
 .card:hover {
@@ -118,7 +129,7 @@ body {
 
 .card h2 {
     font-size: var(--mdc-typography-headline5-font-size);
-    margin-bottom: var(--mdc-spacing-3);
+    margin-bottom: var(--mdc-spacing-2);
     color: var(--mdc-theme-on-surface);
     font-weight: 500;
     display: flex;
@@ -256,10 +267,8 @@ body {
 
 /* Songs Container */
 .songs-container {
-    height: 50vh;
     min-height: 200px;
-    max-height: 85vh;
-    overflow-y: auto;
+    overflow-y: auto; /* Enable scrolling */
     border: 2px solid #e0e0e0;
     border-radius: var(--mdc-shape-small);
     padding: var(--mdc-spacing-2);
@@ -555,8 +564,8 @@ body {
 .stats {
     display: flex;
     justify-content: space-between;
-    margin-bottom: var(--mdc-spacing-3);
-    padding: var(--mdc-spacing-2);
+    margin-bottom: var(--mdc-spacing-2);
+    padding: var(--mdc-spacing-1);
     background: #f5f5f5;
     border-radius: var(--mdc-shape-small);
     box-shadow: var(--mdc-elevation-1);
@@ -576,6 +585,10 @@ body {
 }
 
 .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-direction: column; /* Default to column for mobile */
     text-align: center;
     flex: 1;
 }
@@ -584,7 +597,6 @@ body {
     font-size: var(--mdc-typography-headline5-font-size);
     font-weight: 500;
     color: var(--mdc-theme-primary);
-    display: block;
 }
 
 .stat-label {
@@ -592,7 +604,19 @@ body {
     color: #666;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-top: var(--mdc-spacing-1);
+    margin-top: 0;
+}
+
+/* Override mobile stacking for larger screens */
+@media (min-width: 769px) {
+    .stat-item {
+        flex-direction: row; /* Row direction for desktop */
+        justify-content: center; /* Center horizontally */
+    }
+
+    .stat-label {
+        text-align: left; /* Align text to the left for desktop */
+    }
 }
 
 /* Export Options */
@@ -956,4 +980,60 @@ body {
 .rating-picker .star-picker:active {
     transform: scale(1.15);
     filter: brightness(0.7);
+} 
+
+.main-layout {
+    display: flex;
+    gap: var(--mdc-spacing-3);
+    flex-wrap: wrap;
+    /* align-items: flex-start; */
+    flex-grow: 1;
+}
+
+.pane-1,
+.pane-2,
+.pane-3 {
+    flex: 1;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Adjustments for smaller screens (mobile first approach) */
+@media (max-width: 768px) {
+    .main-layout {
+        flex-direction: column;
+    }
+
+    .pane-1, .pane-2, .pane-3 {
+        width: 100%;
+        min-width: unset;
+    }
+}
+
+/* Desktop specific three-pane layout */
+@media (min-width: 1024px) {
+    .main-layout {
+        display: grid;
+        grid-template-columns: 1fr 2fr 1fr;
+        gap: var(--mdc-spacing-2);
+        align-items: stretch; /* Make items stretch to equal height */
+    }
+
+    .pane-1,
+    .pane-2,
+    .pane-3 {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card {
+        flex-grow: 1; /* Allow cards inside panes to grow */
+    }
+
+    .songs-container {
+        overflow-y: auto; /* Enable scrolling for songs container */
+        height: auto; /* Allow height to be determined by flex-grow */
+        flex-grow: 1; /* Allow it to take available vertical space */
+    }
 } 
