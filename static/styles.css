@@ -74,7 +74,6 @@ body {
 
 /* Container */
 .container {
-    /* max-width: 1200px; */
     margin: 0 auto;
     padding: var(--mdc-spacing-2);
     display: flex;
@@ -117,7 +116,7 @@ body {
     border-radius: var(--mdc-shape-medium);
     box-shadow: var(--mdc-elevation-4);
     padding: var(--mdc-spacing-2);
-    margin-bottom: var(--mdc-spacing-4);
+    margin-bottom: var(--mdc-spacing-1);
     transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     flex-direction: column;
@@ -268,6 +267,7 @@ body {
 /* Songs Container */
 .songs-container {
     min-height: 200px;
+    max-height: 80vh; /* Set a max-height relative to viewport height */
     overflow-y: auto; /* Enable scrolling */
     border: 2px solid #e0e0e0;
     border-radius: var(--mdc-shape-small);
@@ -1033,6 +1033,6 @@ body {
 
     .songs-container {
         overflow-y: auto;
-        height: calc(100% - 125px);
+        height: calc(100% - 170px); /* Adjusted value to account for action buttons */
     }
 } 
