@@ -1032,8 +1032,7 @@ body {
     }
 
     .songs-container {
-        overflow-y: auto; /* Enable scrolling for songs container */
-        height: auto; /* Allow height to be determined by flex-grow */
-        flex-grow: 1; /* Allow it to take available vertical space */
+        overflow-y: auto;
+        height: calc(100% - 125px);
     }
 } 
