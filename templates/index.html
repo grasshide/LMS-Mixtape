@@ -56,18 +56,22 @@
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
-                                <label for="dynPsVal">Min Dynamic Played/Skipped Value (0 = ignore)</label>
+                                <div class="label-and-value">
+                                    <label for="dynPsVal">Min Dynamic Played/Skipped Value (0 = ignore)</label>
+                                    <span id="dynPsValValue" style="margin-left: 10px; font-weight: bold;">0</span>
+                                </div>
                                 <input type="range" id="dynPsVal" class="form-control" value="0" min="-100" max="100" step="5" oninput="document.getElementById('dynPsValValue').textContent = this.value">
-                                <span id="dynPsValValue" style="margin-left: 10px; font-weight: bold;">0</span>
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
-                                <label for="albumLimit">Max Tracks per Album (0 = no limit)</label>
+                                <div class="label-and-value">
+                                    <label for="albumLimit">Max Tracks per Album (0 = no limit)</label>
+                                    <span id="albumLimitValue" style="margin-left: 10px; font-weight: bold;">0</span>
+                                </div>
                                 <input type="range" id="albumLimit" class="form-control" value="0" min="0" max="3" step="1" oninput="document.getElementById('albumLimitValue').textContent = this.value">
-                                <span id="albumLimitValue" style="margin-left: 10px; font-weight: bold;">0</span>
                             </div>
                         </div>
                     </div>

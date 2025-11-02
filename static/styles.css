@@ -153,6 +153,17 @@ body {
     font-size: var(--mdc-typography-subtitle2-font-size);
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    margin-bottom: 0; /* Remove bottom margin for labels within .label-and-value */
+}
+
+.label-and-value {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Align items to left and right edges */
+}
+
+.label-and-value label {
+    margin-bottom: 0; /* Ensure no extra margin below label */
 }
 
 .form-control {
