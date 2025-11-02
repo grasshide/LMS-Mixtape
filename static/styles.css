@@ -267,6 +267,7 @@ body {
 /* Songs Container */
 .songs-container {
     min-height: 200px;
+    overflow-y: auto; /* Enable scrolling */
     border: 2px solid #e0e0e0;
     border-radius: var(--mdc-shape-small);
     padding: var(--mdc-spacing-2);
@@ -1030,6 +1031,8 @@ body {
     }
 
     .songs-container {
-        height: calc(100%); /* Adjusted value based on content within the card */
+        overflow-y: auto;
+        /* \height: calc(100%); Adjusted value based on content within the card */
+        max-height: 65vh;
     }
 } 
