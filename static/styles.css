@@ -985,7 +985,6 @@ body {
     display: flex;
     gap: var(--mdc-spacing-3);
     flex-wrap: wrap;
-    /* align-items: flex-start; */
     flex-grow: 1;
 }
 
@@ -1016,7 +1015,7 @@ body {
         display: grid;
         grid-template-columns: 1fr 2fr 1fr;
         gap: var(--mdc-spacing-2);
-        align-items: stretch; /* Make items stretch to equal height */
+        align-items: stretch;
     }
 
     .pane-1,
@@ -1027,12 +1026,11 @@ body {
     }
 
     .card {
-        flex-grow: 1; /* Allow cards inside panes to grow */
+        flex-grow: 1;
     }
 
     .songs-container {
         overflow-y: auto;
-        /* \height: calc(100%); Adjusted value based on content within the card */
-        max-height: 65vh;
+        max-height: 63vh;
     }
 } 
