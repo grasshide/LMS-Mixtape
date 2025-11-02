@@ -1031,7 +1031,6 @@ body {
 
     .songs-container {
         overflow-y: auto;
-        height: auto; /* Allow height to be determined by flex-grow */
-        flex-grow: 1; /* Allow it to take available vertical space */
+        max-height: 63vh;
     }
 } 
