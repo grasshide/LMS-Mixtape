@@ -687,8 +687,8 @@ body {
 }
 
 .song-cover {
-    width: 64px;
-    height: 64px;
+    width: 92px;
+    height: 92px;
     object-fit: cover;
     margin-right: 16px;
     border-radius: 6px;
