@@ -60,6 +60,7 @@
 
 html, body {
     min-height: 100vh;
+    height: 100vh;
 }
 
 body {
@@ -70,6 +71,8 @@ body {
     line-height: 1.4;
     display: flex;
     flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
 }
 
 /* Container */
@@ -78,6 +81,8 @@ body {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+    height: 100vh;
+    max-height: 100vh;
 }
 
 /* Header */
@@ -147,7 +152,6 @@ body {
 }
 
 .form-group label {
-    display: block;
     font-weight: 500;
     color: var(--mdc-theme-on-surface);
     font-size: var(--mdc-typography-subtitle2-font-size);
@@ -322,8 +326,6 @@ body {
 
 /* Songs Container */
 .songs-container {
-    min-height: 200px;
-    overflow-y: auto; /* Enable scrolling */
     border: 2px solid #e0e0e0;
     border-radius: var(--mdc-shape-small);
     padding: var(--mdc-spacing-2);
@@ -1042,6 +1044,9 @@ body {
     gap: var(--mdc-spacing-3);
     flex-wrap: wrap;
     flex-grow: 1;
+    flex: 1;
+    min-height: 0; /* allow children to flex/scroll */
+    max-height: 100%;
 }
 
 .pane-1,
@@ -1053,15 +1058,52 @@ body {
     flex-direction: column;
 }
 
+.pane-2 {
+    min-height: 0;
+}
+.card {
+    min-height: 0;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+.songs-container {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: 100%;
+    overflow-y: auto;
+}
+
 /* Adjustments for smaller screens (mobile first approach) */
 @media (max-width: 768px) {
-    .main-layout {
-        flex-direction: column;
+    .container {
+        overflow-y: auto;
     }
+    .main-layout {
+        display: block;
+        height: auto;
+        max-height: none;
+        
 
-    .pane-1, .pane-2, .pane-3 {
+    }
+    .pane-1,
+    .pane-2,
+    .pane-3 {
+        display: block;
         width: 100%;
-        min-width: unset;
+        min-width: 0;
+        max-width: none;
+        min-height: 0;
+        max-height: none;
+    }
+    .card {
+        max-height: none;
+    }
+    .songs-container {
+        max-height: 65vh;
+        min-height: 160px;
+        overflow-y: auto;
     }
 }
 
@@ -1072,23 +1114,36 @@ body {
         grid-template-columns: 3fr 4fr 3fr;
         gap: var(--mdc-spacing-2);
         align-items: stretch;
+        height: 100%;
+        max-height: 100%;
+        min-height: 0;
+        overflow: hidden;
     }
-
     .pane-1,
     .pane-2,
     .pane-3 {
         display: flex;
         flex-direction: column;
+        min-height: 0;
+        max-height: 100%;
+    }
+    .pane-2 {
+        min-height: 0;
+        overflow: hidden;
     }
 
     .card {
         flex-grow: 1;
+        min-height: 0;
+        max-height: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow: visible;
     }
-
     .songs-container {
+        flex: 1 1 auto;
+        min-height: 0;
+        max-height: 100%;
         overflow-y: auto;
-        height: auto; /* Revert to auto height for flex-grow to work */
-        flex-grow: 1; /* Allow it to take available vertical space */
-        /* max-height: 63vh; Removed to allow full pane height stretch */
     }
 } 
