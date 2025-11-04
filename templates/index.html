@@ -23,8 +23,10 @@
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
-                                <label for="rating">Minimum Rating</label>
-                                <div id="ratingPicker" class="rating-picker" style="display: flex; align-items: center; gap: 4px;"></div>
+                                <div class="label-and-value">
+                                    <label for="rating">Minimum Rating</label>
+                                    <div id="ratingPicker" class="rating-picker" style="display: flex; align-items: center; gap: 4px;"></div>
+                                </div>
                                 <input type="hidden" id="rating" value="40">
                             </div>
                         </div>
@@ -32,8 +34,19 @@
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
-                                <label for="limit">Number of Songs</label>
-                                <input type="number" id="limit" class="form-control" value="10" min="1" max="500">
+                                <div class="label-and-value">
+                                    <label for="limit">Number of Songs</label>
+                                    <div class="number-input-buttons">
+                                        <button type="button" id="decreaseLimit" class="btn-icon" aria-label="Decrease">
+                                            <span class="material-icons">keyboard_arrow_down</span>
+                                        </button>
+                                        <span id="limitDisplay" class="number-display">10</span>
+                                        <button type="button" id="increaseLimit" class="btn-icon" aria-label="Increase">
+                                            <span class="material-icons">keyboard_arrow_up</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="limit" value="10" min="1" max="500">
                             </div>
                         </div>
                     </div>

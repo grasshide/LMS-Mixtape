@@ -179,6 +179,51 @@ body {
     padding-inline: 10px;
 }
 
+.number-input-buttons {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--mdc-spacing-2);
+}
+
+.btn-icon {
+    background: transparent; /* remove square background */
+    color: var(--mdc-theme-primary);
+    border: none;
+    border-radius: 0;
+    padding: 0; /* icon only */
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    height: auto;
+    box-shadow: none; /* no shadow border */
+    transition: color 0.2s ease;
+}
+
+.btn-icon .material-icons {
+    font-size: 32px; /* enlarge arrow icons */
+    line-height: 1;
+}
+
+.btn-icon:hover {
+    transform: none;
+    box-shadow: none;
+    color: #4a56d6; /* subtle hover tint */
+}
+
+.btn-icon:active {
+    transform: none;
+    box-shadow: none;
+}
+
+.number-display {
+    font-weight: 500;
+    color: var(--mdc-theme-on-surface);
+    min-width: 40px; /* Ensure enough space for the number */
+    text-align: center;
+}
+
 .form-control:focus {
     outline: none;
     border-color: var(--mdc-theme-primary);
@@ -1042,6 +1087,8 @@ body {
 
     .songs-container {
         overflow-y: auto;
-        max-height: 63vh;
+        height: auto; /* Revert to auto height for flex-grow to work */
+        flex-grow: 1; /* Allow it to take available vertical space */
+        /* max-height: 63vh; Removed to allow full pane height stretch */
     }
 } 

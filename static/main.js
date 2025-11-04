@@ -313,4 +313,38 @@ document.addEventListener('DOMContentLoaded', function() {
             renderRatingPicker(currentRating);
         }
     });
+
+    // Custom number input logic for 'Number of Songs'
+    const limitDisplay = document.getElementById('limitDisplay');
+    const limitInput = document.getElementById('limit');
+    const decreaseLimitBtn = document.getElementById('decreaseLimit');
+    const increaseLimitBtn = document.getElementById('increaseLimit');
+
+    function updateLimit(newValue) {
+        const min = 10;
+        let currentValue = parseInt(limitInput.value);
+
+        let calculatedValue = currentValue;
+        if (newValue !== undefined) {
+            calculatedValue = newValue;
+        }
+
+        if (calculatedValue < min) {
+            calculatedValue = min;
+        }
+
+        limitInput.value = calculatedValue;
+        limitDisplay.textContent = calculatedValue;
+    }
+
+    decreaseLimitBtn.addEventListener('click', () => {
+        updateLimit(parseInt(limitInput.value) - 10);
+    });
+
+    increaseLimitBtn.addEventListener('click', () => {
+        updateLimit(parseInt(limitInput.value) + 10);
+    });
+
+    // Initialize display with current value
+    updateLimit(parseInt(limitInput.value));
 }); 
