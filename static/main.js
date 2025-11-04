@@ -161,8 +161,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 songs = data.songs;
                 selectedSongs.clear();
                 renderSongs();
-                document.getElementById('resultsCard').style.display = 'block';
-                document.getElementById('exportCard').style.display = 'block';
                 showAlert(`Found ${data.count} songs!`, 'success');
             } else {
                 showAlert(`Error: ${data.error}`, 'error');
