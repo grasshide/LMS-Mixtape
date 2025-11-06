@@ -1,6 +1,7 @@
 // JavaScript for Music Export Tool
 let songs = [];
 let selectedSongs = new Set();
+let viewMode = 'search'; // 'search' or 'sync'
 
 // Utility functions
 function showAlert(message, type = 'info') {
@@ -25,6 +26,16 @@ function showAlert(message, type = 'info') {
 function updateStats() {
     document.getElementById('totalSongs').textContent = songs.length;
     document.getElementById('selectedSongs').textContent = selectedSongs.size;
+    
+    // Show/hide delete button in sync view when songs are selected
+    const deleteBtn = document.getElementById('deleteSelectedBtn');
+    if (deleteBtn) {
+        if (viewMode === 'sync' && selectedSongs.size > 0) {
+            deleteBtn.style.display = 'inline-flex';
+        } else {
+            deleteBtn.style.display = 'none';
+        }
+    }
 }
 
 function renderStars(rating, idPrefix = '') {
@@ -158,6 +169,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             const data = await response.json();
             if (data.success) {
+                viewMode = 'search';
                 songs = data.songs;
                 selectedSongs.clear();
                 renderSongs();
@@ -197,6 +209,95 @@ document.addEventListener('DOMContentLoaded', function() {
         selectedSongs.clear();
         renderSongs();
     });
+
+    const syncBtn = document.getElementById('syncFolderBtn');
+    if (syncBtn) {
+        syncBtn.addEventListener('click', async () => {
+            try {
+                syncBtn.disabled = true;
+                syncBtn.innerHTML = '<span class="material-icons rotating">refresh</span> Loading...';
+                const res = await fetch('/api/sync/list');
+                const data = await res.json();
+                if (data.success) {
+                    viewMode = 'sync';
+                    songs = data.songs || [];
+                    selectedSongs.clear();
+                    renderSongs();
+                    showAlert(`Loaded ${data.count} files from sync folder`, 'success');
+                } else {
+                    showAlert(`Error: ${data.error}`, 'error');
+                }
+            } catch (e) {
+                showAlert(`Network error: ${e.message}`, 'error');
+            } finally {
+                syncBtn.disabled = false;
+                syncBtn.innerHTML = '<span class="material-icons">folder</span> Sync Folder';
+            }
+        });
+    }
+
+    const deleteBtn = document.getElementById('deleteSelectedBtn');
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', async () => {
+            if (viewMode !== 'sync' || selectedSongs.size === 0) {
+                return;
+            }
+
+            const selectedCount = selectedSongs.size;
+            //const ok = confirm(`Delete ${selectedCount} file${selectedCount > 1 ? 's' : ''} from sync folder?`);
+            //if (!ok) return;
+
+            deleteBtn.disabled = true;
+            deleteBtn.innerHTML = '<span class="material-icons rotating">refresh</span> Deleting...';
+
+            try {
+                // Get selected songs and delete them
+                const selectedIndices = Array.from(selectedSongs).sort((a, b) => b - a); // Sort descending to avoid index shifting issues
+                const selectedItems = selectedIndices.map(idx => songs[idx]);
+                
+                let successCount = 0;
+                let failCount = 0;
+
+                // Delete files one by one
+                for (const item of selectedItems) {
+                    try {
+                        const response = await fetch('/api/sync/delete', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ filename: item.filename })
+                        });
+                        const data = await response.json();
+                        if (data.success) {
+                            successCount++;
+                        } else {
+                            failCount++;
+                        }
+                    } catch (err) {
+                        failCount++;
+                    }
+                }
+
+                // Remove deleted items from songs array (in reverse order to maintain indices)
+                for (const idx of selectedIndices) {
+                    songs.splice(idx, 1);
+                }
+
+                selectedSongs.clear();
+                renderSongs();
+
+                if (failCount === 0) {
+                    showAlert(`Successfully deleted ${successCount} file${successCount > 1 ? 's' : ''}`, 'success');
+                } else {
+                    showAlert(`Deleted ${successCount} file${successCount > 1 ? 's' : ''}, ${failCount} failed`, 'error');
+                }
+            } catch (error) {
+                showAlert(`Network error: ${error.message}`, 'error');
+            } finally {
+                deleteBtn.disabled = false;
+                deleteBtn.innerHTML = '<span class="material-icons">delete</span> Delete Selected';
+            }
+        });
+    }
 
     // Function to toggle embed covers checkbox visibility
     function toggleEmbedCoversVisibility() {

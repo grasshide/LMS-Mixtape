@@ -25,6 +25,56 @@ def get_artist_and_title(source_file):
     
     return None, None
 
+def get_audio_metadata(source_file):
+    """Extract comprehensive metadata from music file tags.
+    
+    Returns a dict with: artist, title, album, year, genre, or None if extraction fails.
+    """
+    try:
+        tags = None
+        if source_file.suffix == '.mp3':
+            tags = EasyID3(str(source_file))
+        elif source_file.suffix == '.flac':
+            tags = FLAC(str(source_file))
+
+        
+        if tags:
+            metadata = {}
+            # Extract common fields
+            if hasattr(tags, 'get'):
+                # EasyID3 or FLAC style
+                metadata['artist'] = tags.get("artist", [""])[0] if "artist" in tags else ""
+                metadata['title'] = tags.get("title", [""])[0] if "title" in tags else ""
+                metadata['album'] = tags.get("album", [""])[0] if "album" in tags else ""
+                metadata['genre'] = tags.get("genre", [""])[0] if "genre" in tags else ""
+                
+                # Year/date handling
+                year = None
+                if "date" in tags:
+                    date_str = tags.get("date", [""])[0]
+                    if date_str:
+                        # Extract year from date string (could be "2023" or "2023-01-01")
+                        try:
+                            year = int(date_str.split('-')[0])
+                        except (ValueError, AttributeError):
+                            pass
+                elif "originaldate" in tags:
+                    date_str = tags.get("originaldate", [""])[0]
+                    if date_str:
+                        try:
+                            year = int(date_str.split('-')[0])
+                        except (ValueError, AttributeError):
+                            pass
+                metadata['year'] = year
+            else:
+                return None
+            
+            return metadata
+    except Exception as e:
+        print(f"Error reading metadata from {source_file}: {e}")
+    
+    return None
+
 def add_mp3_cover(filename, album_art):
     """Add cover art to MP3 file"""
     try:
