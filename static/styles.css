@@ -124,6 +124,9 @@ body {
     transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     flex-direction: column;
+    min-height: 0;
+    max-height: 100%;
+    flex-grow: 1;
 }
 
 .card:hover {
@@ -228,20 +231,21 @@ body {
     text-align: center;
 }
 
-.form-control:focus {
-    outline: none;
-    border-color: var(--mdc-theme-primary);
-    box-shadow: 0 0 0 3px rgba(98, 0, 238, 0.1);
-}
-
 .form-control:hover {
     border-color: #bdbdbd;
 }
 
-
+.form-control:focus {
+    outline: 2px solid var(--mdc-theme-primary);
+    outline-offset: 2px;
+    border-color: var(--mdc-theme-primary);
+    box-shadow: 0 0 0 3px rgba(98, 0, 238, 0.1);
+}
 
 /* Material Buttons */
 .btn {
+    position: relative;
+    overflow: hidden;
     background: var(--mdc-theme-primary);
     color: var(--mdc-theme-on-primary);
     border: none;
@@ -258,8 +262,6 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     box-shadow: var(--mdc-elevation-2);
-    position: relative;
-    overflow: hidden;
     min-height: 36px;
     line-height: 1;
 }
@@ -331,6 +333,10 @@ body {
     padding: var(--mdc-spacing-2);
     background: #fafafa;
     resize: none;
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: 100%;
+    overflow-y: auto;
 }
 
 .songs-container::-webkit-scrollbar {
@@ -379,7 +385,6 @@ body {
     box-shadow: var(--mdc-elevation-4);
 }
 
-
 .song-info {
     flex: 1;
 }
@@ -405,17 +410,14 @@ body {
     box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.15);
 }
 
-.song-details {
-    font-size: var(--mdc-typography-body2-font-size);
-    opacity: 0.8;
-    line-height: 1.4;
-}
-
 /* Structured meta layout for song details */
 .song-details {
     display: flex;
     flex-wrap: wrap;
     gap: 6px 10px;
+    font-size: var(--mdc-typography-body2-font-size);
+    opacity: 0.8;
+    line-height: 1.4;
 }
 
 .song-details .meta-item {
@@ -811,10 +813,6 @@ body {
         line-height: 1.35;
         word-break: break-word;
         white-space: normal;
-    }
-
-    /* On mobile, make meta items larger tap targets and allow full-width wrapping */
-    .song-details {
         gap: 10px 12px;
     }
     .song-details .meta-item {
@@ -851,11 +849,6 @@ body {
 }
 
 /* Material Design Ripple Effect */
-.btn {
-    position: relative;
-    overflow: hidden;
-}
-
 .btn::after {
     content: '';
     position: absolute;
@@ -894,13 +887,6 @@ body {
     letter-spacing: normal;
     cursor: pointer;
     font-size: var(--mdc-typography-body1-font-size);
-}
-
-/* Focus states for accessibility */
-.btn:focus,
-.form-control:focus {
-    outline: 2px solid var(--mdc-theme-primary);
-    outline-offset: 2px;
 }
 
 /* Dark mode support */
@@ -994,7 +980,6 @@ body {
 }
 .rating-picker .star-picker {
     color: var(--mdc-theme-primary);
-    /* color: var(--mdc-theme-on-surface); */
     width: 28px;
     height: 28px;
     cursor: pointer;
@@ -1028,31 +1013,27 @@ body {
 .pane-2 {
     min-height: 0;
 }
-.card {
-    min-height: 0;
-    max-height: 100%;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-}
-.songs-container {
-    flex: 1 1 auto;
-    min-height: 0;
-    max-height: 100%;
-    overflow-y: auto;
-}
 
 /* Adjustments for smaller screens (mobile first approach) */
 @media (max-width: 1024px) {
-    .container {
+    html, body {
+        height: auto;
+        min-height: 100vh;
+    }
+    body {
         overflow-y: auto;
+        height: auto;
+        min-height: 100vh;
+    }
+    .container {
+        height: auto;
+        max-height: none;
+        padding-bottom: var(--mdc-spacing-6);
     }
     .main-layout {
         display: block;
         height: auto;
         max-height: none;
-        
-
     }
     .pane-1,
     .pane-2,
@@ -1106,11 +1087,5 @@ body {
         display: flex;
         flex-direction: column;
         overflow: visible;
-    }
-    .songs-container {
-        flex: 1 1 auto;
-        min-height: 0;
-        max-height: 100%;
-        overflow-y: auto;
     }
 } 
