@@ -294,7 +294,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 showAlert(`Network error: ${error.message}`, 'error');
             } finally {
                 deleteBtn.disabled = false;
-                deleteBtn.innerHTML = '<span class="material-icons">delete</span> Delete Selected';
+                deleteBtn.innerHTML = '<span class="material-icons">delete</span> Delete';
             }
         });
     }
