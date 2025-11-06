@@ -379,40 +379,6 @@ body {
     box-shadow: var(--mdc-elevation-4);
 }
 
-/* Ensure stars take on the on-primary color when selected */
-.song-item.selected .rating-stars {
-    color: var(--mdc-theme-on-primary);
-}
-
-.song-item.selected .rating-stars svg.star polygon {
-    stroke: currentColor !important;
-}
-
-/* Ensure half-filled stars (rendered via clipPath) keep their fill on selection */
-.song-item.selected .rating-stars svg.star polygon[clip-path] {
-    fill: currentColor !important;
-}
-
-/* Full stars - change fill to white */
-.song-item.selected .rating-stars svg.star[fill="#6200ee"] {
-    fill: white !important;
-    stroke: white !important;
-}
-
-/* Half stars - change the gradient and stroke to white */
-.song-item.selected .rating-stars svg.star polygon[fill^="url(#half)"] {
-    stroke: white !important;
-}
-
-/* Make the colored half of the gradient white */
-.song-item.selected .rating-stars svg.star defs linearGradient#half stop:first-child {
-    stop-color: white !important;
-}
-
-/* Empty stars - keep fill as none, change stroke to white */
-.song-item.selected .rating-stars svg.star[fill="none"] {
-    stroke: white !important;
-}
 
 .song-info {
     flex: 1;
@@ -665,7 +631,7 @@ body {
 }
 
 /* Override mobile stacking for larger screens */
-@media (min-width: 769px) {
+@media (min-width: 1024px) {
     .stat-item {
         flex-direction: row; /* Row direction for desktop */
         justify-content: center; /* Center horizontally */
@@ -754,7 +720,7 @@ body {
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
     .container {
 		padding: var(--mdc-spacing-1);
     }
@@ -1027,7 +993,8 @@ body {
     margin-bottom: 4px;
 }
 .rating-picker .star-picker {
-    color: var(--mdc-theme-on-surface);
+    color: var(--mdc-theme-primary);
+    /* color: var(--mdc-theme-on-surface); */
     width: 28px;
     height: 28px;
     cursor: pointer;
@@ -1076,7 +1043,7 @@ body {
 }
 
 /* Adjustments for smaller screens (mobile first approach) */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
     .container {
         overflow-y: auto;
     }

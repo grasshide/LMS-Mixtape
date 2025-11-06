@@ -33,18 +33,18 @@ function renderStars(rating, idPrefix = '') {
     let html = '';
     for (let i = 0; i < 5; i++) {
         if (i < fullStars) {
-            html += `<svg class="star" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><polygon points="12,2 15,9 22,9.3 17,14.1 18.5,21 12,17.8 5.5,21 7,14.1 2,9.3 9,9"/></svg>`;
+            html += `<svg class="star" width="24" height="24" viewBox="0 0 24 24" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><polygon points="12,2 15,9 22,9.3 17,14.1 18.5,21 12,17.8 5.5,21 7,14.1 2,9.3 9,9"/></svg>`;
         } else if (i === fullStars && halfStar) {
             const clipId = `half-clip-${idPrefix}-${i}`;
             html += `<svg class="star" width="24" height="24" viewBox="0 0 24 24">
                 <defs>
                     <clipPath id="${clipId}"><rect x="0" y="0" width="12" height="24"/></clipPath>
                 </defs>
-                <polygon points="12,2 15,9 22,9.3 17,14.1 18.5,21 12,17.8 5.5,21 7,14.1 2,9.3 9,9" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+                <polygon points="12,2 15,9 22,9.3 17,14.1 18.5,21 12,17.8 5.5,21 7,14.1 2,9.3 9,9" fill="none"  stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
                 <polygon points="12,2 15,9 22,9.3 17,14.1 18.5,21 12,17.8 5.5,21 7,14.1 2,9.3 9,9" fill="currentColor" clip-path="url(#${clipId})"/>
             </svg>`;
         } else {
-            html += `<svg class="star" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><polygon points="12,2 15,9 22,9.3 17,14.1 18.5,21 12,17.8 5.5,21 7,14.1 2,9.3 9,9"/></svg>`;
+            html += `<svg class="star" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><polygon points="12,2 15,9 22,9.3 17,14.1 18.5,21 12,17.8 5.5,21 7,14.1 2,9.3 9,9"/></svg>`;
         }
     }
     return html;
@@ -92,7 +92,7 @@ function renderRatingPicker(value) {
     const starValue = value / 20; // 0-5 in 0.5 steps
     
     // Get the theme color from CSS custom property
-    const themeColor = getComputedStyle(document.documentElement).getPropertyValue('--mdc-theme-on-surface').trim() || '#111';
+    const themeColor = getComputedStyle(document.documentElement).getPropertyValue('--mdc-theme-primary').trim() || '#111';
     
     // Add a "no rating" option (0 stars) at the beginning
     const noRatingSvg = `<svg class="star-picker" data-value="0" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="${themeColor}" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="cursor:pointer; margin-right: 8px;"><polygon points="12,2 15,9 22,9.3 17,14.1 18.5,21 12,17.8 5.5,21 7,14.1 2,9.3 9,9"/></svg>`;
