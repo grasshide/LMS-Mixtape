@@ -330,7 +330,7 @@ body {
     border-radius: var(--mdc-shape-small);
     padding: var(--mdc-spacing-2);
     background: #fafafa;
-    resize: vertical;
+    resize: none;
 }
 
 .songs-container::-webkit-scrollbar {
@@ -834,7 +834,7 @@ body {
         height: 65vh;
         min-height: 200px;
         max-height: 85vh;
-        resize: vertical;
+        resize: none;
         padding: 12px 8px;
         /* Tiny gutter inside card */
         margin-left: 0;
