@@ -80,8 +80,8 @@ function renderSongs() {
                     ${song.exists_in_sync ? '<span class="exists-marker" title="Already in sync folder"><span class="dot"></span></span>' : ''}
                 </div>
                 <div class="song-details" role="list">
-                    <span class="meta-item" role="listitem"><span class="meta-label">Artist</span><span class="meta-value">${song.artist.slice(0, 20).trimEnd() || 'Unknown Artist'}</span></span>
-                    <span class="meta-item" role="listitem"><span class="meta-label">Album</span><span class="meta-value">${song.album.slice(0, 20).trimEnd() || 'Unknown Album'}</span></span>
+                    <span class="meta-item" role="listitem"><span class="meta-label">Artist</span><span class="meta-value">${trimCustom(song.artist) || 'Unknown Artist'}</span></span>
+                    <span class="meta-item" role="listitem"><span class="meta-label">Album</span><span class="meta-value">${trimCustom(song.album) || 'Unknown Album'}</span></span>
                     ${song.year ? `<span class="meta-item" role="listitem"><span class="meta-label">Year</span><span class="meta-value">${song.year}</span></span>` : ''}
                     ${song.dyn_ps_val !== null && song.dyn_ps_val !== 0 ? `<span class="meta-item" role="listitem"><span class="meta-label">Dynamic</span><span class="meta-value">${song.dyn_ps_val}</span></span>` : ''}
                 </div>
@@ -93,6 +93,11 @@ function renderSongs() {
         container.appendChild(songElement);
     });
     updateStats();
+}
+
+function trimCustom(value) {
+    return value.slice(0, 17).trimEnd() + "...";
+
 }
 
 function renderRatingPicker(value) {
