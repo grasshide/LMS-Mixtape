@@ -212,6 +212,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const syncBtn = document.getElementById('syncFolderBtn');
     if (syncBtn) {
+        const original = syncBtn.innerHTML;
         syncBtn.addEventListener('click', async () => {
             try {
                 syncBtn.disabled = true;
@@ -231,7 +232,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 showAlert(`Network error: ${e.message}`, 'error');
             } finally {
                 syncBtn.disabled = false;
-                syncBtn.innerHTML = '<span class="material-icons">folder</span> Sync Folder';
+                syncBtn.innerHTML = original;
             }
         });
     }

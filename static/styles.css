@@ -224,6 +224,15 @@ body {
     box-shadow: none;
 }
 
+.btn-danger {
+    margin-left: auto; 
+    margin-right: 0;    
+}
+
+.syncButtonGroup {
+    margin-bottom: var(--mdc-spacing-3);
+}
+
 .number-display {
     font-weight: 500;
     color: var(--mdc-theme-on-surface);
@@ -655,8 +664,8 @@ body {
 
 /* Export Sections */
 .export-section {
-    margin-bottom: var(--mdc-spacing-4);
-    padding: var(--mdc-spacing-3);
+    margin-bottom: var(--mdc-spacing-2);
+    padding: var(--mdc-spacing-2);
     background: #f8f9fa;
     border-radius: var(--mdc-shape-small);
     border-left: 4px solid var(--mdc-theme-primary);
