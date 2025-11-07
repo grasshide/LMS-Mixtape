@@ -180,6 +180,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 songs = data.songs;
                 selectedSongs.clear();
                 renderSongs();
+                // Scroll to top of results list
+                const songsContainer = document.getElementById('songsContainer');
+                if (songsContainer) {
+                    songsContainer.scrollTop = 0;
+                }
                 showAlert(`Found ${data.count} songs!`, 'success');
             } else {
                 showAlert(`Error: ${data.error}`, 'error');
