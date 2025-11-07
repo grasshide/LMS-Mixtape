@@ -459,4 +459,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize display with current value
     updateLimit(parseInt(limitInput.value));
+
+    // Hide some elements if search button is not visible
+    if (window.innerWidth > 1024) {
+        const searchBtn = document.getElementById('searchBtn');
+        const excludeGenresRow = document.getElementById('excludeGenres').closest('.row');
+        const addedBeforeRow = document.getElementById('addedBefore').closest('.row');
+        const exportOptions = document.getElementById('renameFiles').closest('.export-section');
+        
+        if (searchBtn && excludeGenresRow && addedBeforeRow) {
+            const observer = new IntersectionObserver((entries) => {
+                if (!entries[0].isIntersecting) {
+                    excludeGenresRow.style.display = 'none';
+                    addedBeforeRow.style.display = 'none';
+                    exportOptions.style.display = 'none';
+                }
+                observer.disconnect();
+            });
+            
+            observer.observe(searchBtn);
+        }
+    }
 }); 
