@@ -341,7 +341,7 @@ body {
 .songs-container {
     border: 2px solid #e0e0e0;
     border-radius: var(--mdc-shape-small);
-    padding: var(--mdc-spacing-2);
+    padding: var(--mdc-spacing-1);
     background: #fafafa;
     resize: none;
     flex: 1 1 auto;
