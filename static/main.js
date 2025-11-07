@@ -96,8 +96,10 @@ function renderSongs() {
 }
 
 function trimCustom(value) {
-    return value.slice(0, 17).trimEnd() + "...";
-
+    if (value.length > 17) {
+        return value.slice(0, 17).trimEnd() + "...";
+    }
+    return value;
 }
 
 function renderRatingPicker(value) {
