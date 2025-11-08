@@ -1,6 +1,7 @@
 // JavaScript for Music Export Tool
 let songs = [];
 let selectedSongs = new Set();
+let viewMode = 'search'; // 'search' or 'sync'
 
 // Utility functions
 function showAlert(message, type = 'info') {
@@ -25,6 +26,16 @@ function showAlert(message, type = 'info') {
 function updateStats() {
     document.getElementById('totalSongs').textContent = songs.length;
     document.getElementById('selectedSongs').textContent = selectedSongs.size;
+    
+    // Show/hide delete button in sync view when songs are selected
+    const deleteBtn = document.getElementById('deleteSelectedBtn');
+    if (deleteBtn) {
+        if (viewMode === 'sync' && selectedSongs.size > 0) {
+            deleteBtn.style.display = 'inline-flex';
+        } else {
+            deleteBtn.style.display = 'none';
+        }
+    }
 }
 
 function renderStars(rating, idPrefix = '') {
@@ -33,18 +44,18 @@ function renderStars(rating, idPrefix = '') {
     let html = '';
     for (let i = 0; i < 5; i++) {
         if (i < fullStars) {
-            html += `<svg class="star" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><polygon points="12,2 15,9 22,9.3 17,14.1 18.5,21 12,17.8 5.5,21 7,14.1 2,9.3 9,9"/></svg>`;
+            html += `<svg class="star" width="24" height="24" viewBox="0 0 24 24" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><polygon points="12,2 15,9 22,9.3 17,14.1 18.5,21 12,17.8 5.5,21 7,14.1 2,9.3 9,9"/></svg>`;
         } else if (i === fullStars && halfStar) {
             const clipId = `half-clip-${idPrefix}-${i}`;
             html += `<svg class="star" width="24" height="24" viewBox="0 0 24 24">
                 <defs>
                     <clipPath id="${clipId}"><rect x="0" y="0" width="12" height="24"/></clipPath>
                 </defs>
-                <polygon points="12,2 15,9 22,9.3 17,14.1 18.5,21 12,17.8 5.5,21 7,14.1 2,9.3 9,9" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+                <polygon points="12,2 15,9 22,9.3 17,14.1 18.5,21 12,17.8 5.5,21 7,14.1 2,9.3 9,9" fill="none"  stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
                 <polygon points="12,2 15,9 22,9.3 17,14.1 18.5,21 12,17.8 5.5,21 7,14.1 2,9.3 9,9" fill="currentColor" clip-path="url(#${clipId})"/>
             </svg>`;
         } else {
-            html += `<svg class="star" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><polygon points="12,2 15,9 22,9.3 17,14.1 18.5,21 12,17.8 5.5,21 7,14.1 2,9.3 9,9"/></svg>`;
+            html += `<svg class="star" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><polygon points="12,2 15,9 22,9.3 17,14.1 18.5,21 12,17.8 5.5,21 7,14.1 2,9.3 9,9"/></svg>`;
         }
     }
     return html;
@@ -69,8 +80,8 @@ function renderSongs() {
                     ${song.exists_in_sync ? '<span class="exists-marker" title="Already in sync folder"><span class="dot"></span></span>' : ''}
                 </div>
                 <div class="song-details" role="list">
-                    <span class="meta-item" role="listitem"><span class="meta-label">Artist</span><span class="meta-value">${song.artist || 'Unknown Artist'}</span></span>
-                    <span class="meta-item" role="listitem"><span class="meta-label">Album</span><span class="meta-value">${song.album || 'Unknown Album'}</span></span>
+                    <span class="meta-item" role="listitem"><span class="meta-label">Artist</span><span class="meta-value">${trimCustom(song.artist) || 'Unknown Artist'}</span></span>
+                    <span class="meta-item" role="listitem"><span class="meta-label">Album</span><span class="meta-value">${trimCustom(song.album) || 'Unknown Album'}</span></span>
                     ${song.year ? `<span class="meta-item" role="listitem"><span class="meta-label">Year</span><span class="meta-value">${song.year}</span></span>` : ''}
                     ${song.dyn_ps_val !== null && song.dyn_ps_val !== 0 ? `<span class="meta-item" role="listitem"><span class="meta-label">Dynamic</span><span class="meta-value">${song.dyn_ps_val}</span></span>` : ''}
                 </div>
@@ -84,6 +95,13 @@ function renderSongs() {
     updateStats();
 }
 
+function trimCustom(value) {
+    if (value.length > 17) {
+        return value.slice(0, 17).trimEnd() + "...";
+    }
+    return value;
+}
+
 function renderRatingPicker(value) {
     // value: 0-100, but we want exactly 5 stars, each clickable for different values
     const container = document.getElementById('ratingPicker');
@@ -92,7 +110,7 @@ function renderRatingPicker(value) {
     const starValue = value / 20; // 0-5 in 0.5 steps
     
     // Get the theme color from CSS custom property
-    const themeColor = getComputedStyle(document.documentElement).getPropertyValue('--mdc-theme-on-surface').trim() || '#111';
+    const themeColor = getComputedStyle(document.documentElement).getPropertyValue('--mdc-theme-primary').trim() || '#111';
     
     // Add a "no rating" option (0 stars) at the beginning
     const noRatingSvg = `<svg class="star-picker" data-value="0" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="${themeColor}" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="cursor:pointer; margin-right: 8px;"><polygon points="12,2 15,9 22,9.3 17,14.1 18.5,21 12,17.8 5.5,21 7,14.1 2,9.3 9,9"/></svg>`;
@@ -127,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const rating = parseInt(document.getElementById('rating').value);
         const limit = parseInt(document.getElementById('limit').value);
         const excludeGenres = document.getElementById('excludeGenres').value.split(',').map(s => s.trim()).filter(s => s);
-        const dynPsVal = parseInt(document.getElementById('dynPsVal').value);
+        const dynPsVal = parseInt(document.getElementById('dynPsVal').value) * (-1);
         const albumLimit = parseInt(document.getElementById('albumLimit').value);
         const orderBy = document.querySelector('input[name="orderBy"]:checked')?.value || 'added';
         const addedBefore = document.getElementById('addedBefore').value;
@@ -158,11 +176,15 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             const data = await response.json();
             if (data.success) {
+                viewMode = 'search';
                 songs = data.songs;
                 selectedSongs.clear();
                 renderSongs();
-                document.getElementById('resultsCard').style.display = 'block';
-                document.getElementById('exportCard').style.display = 'block';
+                // Scroll to top of results list
+                const songsContainer = document.getElementById('songsContainer');
+                if (songsContainer) {
+                    songsContainer.scrollTop = 0;
+                }
                 showAlert(`Found ${data.count} songs!`, 'success');
             } else {
                 showAlert(`Error: ${data.error}`, 'error');
@@ -199,6 +221,96 @@ document.addEventListener('DOMContentLoaded', function() {
         selectedSongs.clear();
         renderSongs();
     });
+
+    const syncBtn = document.getElementById('syncFolderBtn');
+    if (syncBtn) {
+        const original = syncBtn.innerHTML;
+        syncBtn.addEventListener('click', async () => {
+            try {
+                syncBtn.disabled = true;
+                syncBtn.innerHTML = '<span class="material-icons rotating">refresh</span> Loading...';
+                const res = await fetch('/api/sync/list');
+                const data = await res.json();
+                if (data.success) {
+                    viewMode = 'sync';
+                    songs = data.songs || [];
+                    selectedSongs.clear();
+                    renderSongs();
+                    showAlert(`Loaded ${data.count} files from sync folder`, 'success');
+                } else {
+                    showAlert(`Error: ${data.error}`, 'error');
+                }
+            } catch (e) {
+                showAlert(`Network error: ${e.message}`, 'error');
+            } finally {
+                syncBtn.disabled = false;
+                syncBtn.innerHTML = original;
+            }
+        });
+    }
+
+    const deleteBtn = document.getElementById('deleteSelectedBtn');
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', async () => {
+            if (viewMode !== 'sync' || selectedSongs.size === 0) {
+                return;
+            }
+
+            const selectedCount = selectedSongs.size;
+            //const ok = confirm(`Delete ${selectedCount} file${selectedCount > 1 ? 's' : ''} from sync folder?`);
+            //if (!ok) return;
+
+            deleteBtn.disabled = true;
+            deleteBtn.innerHTML = '<span class="material-icons rotating">refresh</span> Deleting...';
+
+            try {
+                // Get selected songs and delete them
+                const selectedIndices = Array.from(selectedSongs).sort((a, b) => b - a); // Sort descending to avoid index shifting issues
+                const selectedItems = selectedIndices.map(idx => songs[idx]);
+                
+                let successCount = 0;
+                let failCount = 0;
+
+                // Delete files one by one
+                for (const item of selectedItems) {
+                    try {
+                        const response = await fetch('/api/sync/delete', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ filename: item.filename })
+                        });
+                        const data = await response.json();
+                        if (data.success) {
+                            successCount++;
+                        } else {
+                            failCount++;
+                        }
+                    } catch (err) {
+                        failCount++;
+                    }
+                }
+
+                // Remove deleted items from songs array (in reverse order to maintain indices)
+                for (const idx of selectedIndices) {
+                    songs.splice(idx, 1);
+                }
+
+                selectedSongs.clear();
+                renderSongs();
+
+                if (failCount === 0) {
+                    showAlert(`Successfully deleted ${successCount} file${successCount > 1 ? 's' : ''}`, 'success');
+                } else {
+                    showAlert(`Deleted ${successCount} file${successCount > 1 ? 's' : ''}, ${failCount} failed`, 'error');
+                }
+            } catch (error) {
+                showAlert(`Network error: ${error.message}`, 'error');
+            } finally {
+                deleteBtn.disabled = false;
+                deleteBtn.innerHTML = '<span class="material-icons">delete</span> Delete';
+            }
+        });
+    }
 
     // Function to toggle embed covers checkbox visibility
     function toggleEmbedCoversVisibility() {
@@ -313,4 +425,59 @@ document.addEventListener('DOMContentLoaded', function() {
             renderRatingPicker(currentRating);
         }
     });
+
+    // Custom number input logic for 'Number of Songs'
+    const limitDisplay = document.getElementById('limitDisplay');
+    const limitInput = document.getElementById('limit');
+    const decreaseLimitBtn = document.getElementById('decreaseLimit');
+    const increaseLimitBtn = document.getElementById('increaseLimit');
+
+    function updateLimit(newValue) {
+        const min = 10;
+        let currentValue = parseInt(limitInput.value);
+
+        let calculatedValue = currentValue;
+        if (newValue !== undefined) {
+            calculatedValue = newValue;
+        }
+
+        if (calculatedValue < min) {
+            calculatedValue = min;
+        }
+
+        limitInput.value = calculatedValue;
+        limitDisplay.textContent = calculatedValue;
+    }
+
+    decreaseLimitBtn.addEventListener('click', () => {
+        updateLimit(parseInt(limitInput.value) - 10);
+    });
+
+    increaseLimitBtn.addEventListener('click', () => {
+        updateLimit(parseInt(limitInput.value) + 10);
+    });
+
+    // Initialize display with current value
+    updateLimit(parseInt(limitInput.value));
+
+    // Hide some elements if search button is not visible
+    if (window.innerWidth > 1024) {
+        const searchBtn = document.getElementById('searchBtn');
+        const excludeGenresRow = document.getElementById('excludeGenres').closest('.row');
+        const addedBeforeRow = document.getElementById('addedBefore').closest('.row');
+        const exportOptions = document.getElementById('renameFiles').closest('.export-section');
+        
+        if (searchBtn && excludeGenresRow && addedBeforeRow) {
+            const observer = new IntersectionObserver((entries) => {
+                if (!entries[0].isIntersecting) {
+                    excludeGenresRow.style.display = 'none';
+                    addedBeforeRow.style.display = 'none';
+                    exportOptions.style.display = 'none';
+                }
+                observer.disconnect();
+            });
+            
+            observer.observe(searchBtn);
+        }
+    }
 }); 

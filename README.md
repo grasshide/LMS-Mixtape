@@ -5,7 +5,7 @@
 
 A modern web interface for exporting music from your library based on data from the LMS (Lyrion Music Server) database. 
 
-The web interface allows you to:
+LMS Mixtape allows you to:
 
 1. Query your LMS database for songs based on rating and other criteria
 2. Browse and select songs from the search results
@@ -29,6 +29,8 @@ Like LMS, this program will not alter your library in any way. Only the exported
 - filter option for "dynamic played/skipped value" of the Alternative Play Count plugin
 - export to folder generates a new folder for each export or exports to a folder called "sync" (e.g. for syncthing)
 - search results will be marked by a green dot if they already exist in the sync folder
+- ***new:*** the sync folder is now browsable thorough the UI and songs can be deleted
+- ***new:*** the web interface uses a single screen view on larger screens
 
 
 ## Requirements
