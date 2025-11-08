@@ -436,7 +436,7 @@ body {
     align-items: baseline;
     gap: 6px;
     padding: 2px 8px;
-    border-radius: 999px;
+    border-radius: 10px;
     background: #f0f0f0;
     border: 1px solid #e5e5e5;
 }
@@ -824,8 +824,7 @@ body {
         gap: 10px 12px;
     }
     .song-details .meta-item {
-        padding: 6px 12px;
-        border-radius: 10px;
+        padding: 6px 8px;
     }
 
 	.song-rating {
