@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const rating = parseInt(document.getElementById('rating').value);
         const limit = parseInt(document.getElementById('limit').value);
         const excludeGenres = document.getElementById('excludeGenres').value.split(',').map(s => s.trim()).filter(s => s);
-        const dynPsVal = parseInt(document.getElementById('dynPsVal').value);
+        const dynPsVal = parseInt(document.getElementById('dynPsVal').value) * (-1);
         const albumLimit = parseInt(document.getElementById('albumLimit').value);
         const orderBy = document.querySelector('input[name="orderBy"]:checked')?.value || 'added';
         const addedBefore = document.getElementById('addedBefore').value;

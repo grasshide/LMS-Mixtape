@@ -73,7 +73,7 @@
                                     <label for="dynPsVal">Min Dynamic Played/Skipped Value (0 = ignore)</label>
                                     <span id="dynPsValValue" style="margin-left: 10px; font-weight: bold;">0</span>
                                 </div>
-                                <input type="range" id="dynPsVal" class="form-control" value="0" min="-100" max="100" step="5" oninput="document.getElementById('dynPsValValue').textContent = this.value">
+                                <input type="range" id="dynPsVal" class="form-control" value="0" min="-100" max="100" step="5" oninput="document.getElementById('dynPsValValue').textContent = this.value * (-1)">
                             </div>
                         </div>
                     </div>

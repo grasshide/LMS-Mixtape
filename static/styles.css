@@ -253,6 +253,10 @@ body {
     box-shadow: 0 0 0 3px rgba(98, 0, 238, 0.1);
 }
 
+#dynPsVal.form-control {
+    rotate: 180deg;
+}
+
 /* Material Buttons */
 .btn {
     position: relative;
