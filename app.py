@@ -91,6 +91,7 @@ def api_sync_list():
             # Build a song-like object to reuse renderer
             url = path
             cover_url = f"/api/cover?path={urllib.parse.quote(url)}"
+            filesize = round(os.path.getsize(path) / (1024 * 1024), 0);
             
             # Use extracted metadata if available, otherwise fall back to filename
             if metadata:
@@ -119,7 +120,8 @@ def api_sync_list():
                 'album': album,
                 'dyn_ps_val': None,
                 'filename': name,
-                'cover_url': cover_url
+                'cover_url': cover_url,
+                'filesize': filesize
             })
 
         return jsonify({'success': True, 'songs': items, 'count': len(items)})
