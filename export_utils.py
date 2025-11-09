@@ -2,19 +2,25 @@ import os
 import shutil
 import pathlib
 import zipfile
+from pydub import AudioSegment
 from datetime import datetime
 from config import EXPORT_DIR, PUID, PGID
 from audio_utils import get_artist_and_title, embed_cover
 
-def apply_permissions(path):
+def apply_permissions(path: pathlib.Path):
     """Apply PUID and PGID permissions to a file or directory if set"""
     if PUID is None or PGID is None:
         return  # Skip if PUID or PGID are not set
-    
+
     try:
+        path = pathlib.Path(path)  # ensure it's a Path object
         os.chown(path, int(PUID), int(PGID))
+
         # Set read/write permissions for owner and group
-        os.chmod(path, 0o664 if os.path.isfile(path) else 0o775)
+        if path.is_file():
+            path.chmod(0o664)
+        else:
+            path.chmod(0o775)
     except Exception as e:
         print(f"Error applying permissions to {path}: {e}")
 
@@ -37,7 +43,7 @@ def create_target_filename(source_path, original_filename, rename_files=True):
     
     return target_filename
 
-def copy_songs(selected_songs, export_format='folder', embed_covers=True, rename_files=True, sync_folder=False):
+def copy_songs(selected_songs, export_format='folder', embed_covers=True, rename_files=True, song_downsampling=False, sync_folder=False):
     """Copy selected songs to export directory"""
     if not os.path.exists(EXPORT_DIR):
         os.makedirs(EXPORT_DIR)
@@ -74,7 +80,6 @@ def copy_songs(selected_songs, export_format='folder', embed_covers=True, rename
         # Apply permissions to the export folder
         apply_permissions(export_folder)
         
-        copied_files = []
         for song in selected_songs:
             source = pathlib.Path(song['url'])
             
@@ -84,15 +89,30 @@ def copy_songs(selected_songs, export_format='folder', embed_covers=True, rename
             # Create target filename
             target_filename = create_target_filename(source, song['filename'], rename_files)
             target_path = os.path.join(export_folder, target_filename)
-            
-            # Copy file
+
             try:
-                shutil.copy2(source, target_path)
+                # only convert flac
+                if song_downsampling and pathlib.Path(source).suffix.lower() == ".flac":
+
+                    # Load the FLAC file
+                    flac_audio = AudioSegment.from_file(source, format="flac")
+
+                    # Change file extension / overwrite target_path
+                    base, _ = os.path.splitext(target_filename)
+                    target_filename = base + '.mp3'
+                    target_path = os.path.join(export_folder, target_filename)
+
+                    # Export to MP3 with high quality (320 kbps)
+                    flac_audio.export(target_path, format="mp3", bitrate="320k")
+
+                else:
+                    # Copy file
+                    shutil.copy2(source, target_path)
+
                 if embed_covers:
                     embed_cover(source, target_path)
                 # Apply permissions to the copied file
                 apply_permissions(target_path)
-                copied_files.append(target_filename)
             except Exception as e:
                 print(f"Error copying {source}: {e}")
         

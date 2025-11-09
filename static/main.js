@@ -316,6 +316,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function toggleEmbedCoversVisibility() {
         const exportFormat = document.querySelector('input[name="exportFormat"]:checked').value;
         const embedCoversCheckbox = document.getElementById('embedCovers');
+        const songDownsamplingCheckbox = document.getElementById('songDownsampling');
         const syncFolderCheckbox = document.getElementById('syncFolder');
         
         if (exportFormat === 'zip') {
@@ -327,6 +328,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (syncFolderCheckbox) {
                 syncFolderCheckbox.closest('.checkbox-option').style.display = 'none';
             }
+            // Hide song downsampling option for ZIP format
+            if (songDownsamplingCheckbox) {
+                songDownsamplingCheckbox.closest('.checkbox-option').style.display = 'none';
+            }
         } else {
             // Show embed covers option for folder format
             if (embedCoversCheckbox) {
@@ -335,6 +340,10 @@ document.addEventListener('DOMContentLoaded', function() {
             // Show sync folder option for folder format
             if (syncFolderCheckbox) {
                 syncFolderCheckbox.closest('.checkbox-option').style.display = 'flex';
+            }
+            // Show song downsampling option
+            if (songDownsamplingCheckbox) {
+                songDownsamplingCheckbox.closest('.checkbox-option').style.display = 'flex';
             }
         }
     }
@@ -360,6 +369,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const exportFormat = document.querySelector('input[name="exportFormat"]:checked').value;
         const embedCovers = document.getElementById('embedCovers').checked;
         const renameFiles = document.getElementById('renameFiles').checked;
+        const songDownsampling = document.getElementById('songDownsampling').checked;
         const syncFolder = document.getElementById('syncFolder').checked;
         const selectedSongsList = Array.from(selectedSongs).map(index => songs[index]);
         document.getElementById('exportBtn').disabled = true;
@@ -375,6 +385,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     format: exportFormat,
                     embed_covers: embedCovers,
                     rename_files: renameFiles,
+                    song_downsampling : songDownsampling,
                     sync_folder: syncFolder
                 })
             });

@@ -127,6 +127,7 @@ def add_flac_cover(filename, album_art):
 
 def has_embedded_cover(file_path):
     """Check if a music file already has embedded cover art"""
+    file_path = pathlib.Path(file_path)
     try:
         if file_path.suffix == '.mp3':
             audio = MP3(file_path, ID3=ID3)
@@ -208,6 +209,7 @@ def extract_embedded_cover(file_path):
 
 def embed_cover(source_path, target):
     """Embed cover art into music file if no cover is already embedded"""
+    target = pathlib.Path(target)
     # Check if target file already has embedded cover
     if has_embedded_cover(target):
         return  # Skip if cover is already embedded
@@ -226,9 +228,9 @@ def embed_cover(source_path, target):
         return
     
     try:
-        if source_path.suffix == '.mp3':
+        if target.suffix == '.mp3':
             add_mp3_cover(target, str(cover))
-        elif source_path.suffix == '.flac':
+        elif target.suffix == '.flac':
             add_flac_cover(target, str(cover))
     except Exception as e:
         print(f"Error embedding cover: {e}") 

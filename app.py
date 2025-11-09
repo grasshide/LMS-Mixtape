@@ -159,6 +159,7 @@ def api_export():
         export_format = data.get('format', 'folder')
         embed_covers = data.get('embed_covers', True)
         rename_files = data.get('rename_files', True)
+        song_downsampling = data.get('song_downsampling', False)
         sync_folder = data.get('sync_folder', False)
         
         if not selected_songs:
@@ -167,7 +168,7 @@ def api_export():
                 'error': 'No songs selected'
             }), 400
         
-        result_path = copy_songs(selected_songs, export_format, embed_covers, rename_files, sync_folder)
+        result_path = copy_songs(selected_songs, export_format, embed_covers, rename_files, song_downsampling, sync_folder)
         
         return jsonify({
             'success': True,

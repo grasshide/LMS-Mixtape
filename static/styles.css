@@ -376,7 +376,7 @@ body {
 .song-item {
     display: flex;
     align-items: center;
-    padding: var(--mdc-spacing-2);
+    padding: var(--mdc-spacing-1);
     border: 1px solid #e0e0e0;
     border-radius: var(--mdc-shape-small);
     margin-bottom: var(--mdc-spacing-1);
@@ -793,7 +793,7 @@ body {
 		grid-template-columns: 96px 1fr;
 		grid-template-rows: auto auto;
         column-gap: var(--mdc-spacing-2);
-        row-gap: 6px;
+        /* row-gap: 6px; */
         align-items: center;
     }
 
