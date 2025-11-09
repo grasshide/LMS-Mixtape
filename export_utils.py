@@ -107,6 +107,12 @@ def copy_songs(selected_songs, export_format='folder', embed_covers=True, rename
 
                     # Copy metadata
                     copy_meatdata(source, target_path)
+
+                    # Delete the source if in place update
+                    if os.path.dirname(source) == os.path.dirname(target_path):
+                        # check if targes exists and is larger that 100Kb
+                        if pathlib.Path(target_path).exists() and os.path.getsize(target_path) > 100000:
+                            os.remove(source)
                 else:
                     # Copy file
                     shutil.copy2(source, target_path)

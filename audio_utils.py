@@ -2,11 +2,10 @@ import os
 import pathlib
 import base64
 from mutagen.easyid3 import EasyID3
-from mutagen.flac import FLAC
+from mutagen.flac import FLAC, Picture
 from mutagen import File
 from mutagen.mp3 import MP3
-from mutagen.id3 import ID3, APIC, error
-from mutagen.mp3 import EasyMP3
+from mutagen.id3 import ID3, APIC, error, ID3NoHeaderError
 
 def get_artist_and_title(source_file):
     """Extract artist and title from music file tags"""
@@ -107,7 +106,6 @@ def add_mp3_cover(filename, album_art):
 def add_flac_cover(filename, album_art):
     """Add cover art to FLAC file"""
     try:
-        from mutagen.flac import Picture
         audio = File(filename)
         image = Picture()
         image.type = 3
@@ -196,7 +194,6 @@ def extract_embedded_cover(file_path):
                         pass
                 if 'metadata_block_picture' in flac.tags and flac.tags['metadata_block_picture']:
                     try:
-                        from mutagen.flac import Picture
                         data_b64 = flac.tags['metadata_block_picture'][0]
                         pic = Picture()
                         pic.parse(base64.b64decode(data_b64))
@@ -209,23 +206,34 @@ def extract_embedded_cover(file_path):
     return None, None
 
 def copy_meatdata(source, target):
+    """copy metadata as well as the cover (if present) from flac to mp3
+    """
     # Read tags and cover art from the FLAC file
     flac_tags = FLAC(source)
 
     # Write tags to the new MP3 file
-    mp3 = EasyMP3(target)
+    mp3 = EasyID3(target)
+
+    # Only copy keys that EasyID3 supports
+    valid_keys = set(EasyID3.valid_keys.keys())
     for key, value in flac_tags.tags.items():
-        mp3[key] = value
+        key_lower = key.lower()
+        if key_lower in valid_keys:
+            mp3[key_lower] = value
     mp3.save()
 
     # Add cover art (if present)
-    mp3_id3 = ID3(target)
+    try:
+        mp3_id3 = ID3(target)
+    except ID3NoHeaderError:
+        mp3_id3 = ID3()
+
     for picture in flac_tags.pictures:
         mp3_id3.add(APIC(
-            encoding=3,  # UTF-8
-            mime=picture.mime,  # e.g. 'image/jpeg'
-            type=3,  # Front cover
-            desc='Cover',
+            encoding=3,       # UTF-8
+            mime=picture.mime,
+            type=3,           # Cover (front)
+            desc="Cover",
             data=picture.data
         ))
     mp3_id3.save()
