@@ -6,6 +6,7 @@ from mutagen.flac import FLAC
 from mutagen import File
 from mutagen.mp3 import MP3
 from mutagen.id3 import ID3, APIC, error
+from mutagen.mp3 import EasyMP3
 
 def get_artist_and_title(source_file):
     """Extract artist and title from music file tags"""
@@ -206,6 +207,29 @@ def extract_embedded_cover(file_path):
     except Exception as e:
         print(f"Error extracting embedded cover from {file_path}: {e}")
     return None, None
+
+def copy_meatdata(source, target):
+    # Read tags and cover art from the FLAC file
+    flac_tags = FLAC(source)
+
+    # Write tags to the new MP3 file
+    mp3 = EasyMP3(target)
+    for key, value in flac_tags.tags.items():
+        mp3[key] = value
+    mp3.save()
+
+    # Add cover art (if present)
+    mp3_id3 = ID3(target)
+    for picture in flac_tags.pictures:
+        mp3_id3.add(APIC(
+            encoding=3,  # UTF-8
+            mime=picture.mime,  # e.g. 'image/jpeg'
+            type=3,  # Front cover
+            desc='Cover',
+            data=picture.data
+        ))
+    mp3_id3.save()
+
 
 def embed_cover(source_path, target):
     """Embed cover art into music file if no cover is already embedded"""

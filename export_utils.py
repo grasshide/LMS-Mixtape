@@ -5,7 +5,7 @@ import zipfile
 from pydub import AudioSegment
 from datetime import datetime
 from config import EXPORT_DIR, PUID, PGID
-from audio_utils import get_artist_and_title, embed_cover
+from audio_utils import get_artist_and_title, embed_cover, copy_meatdata
 
 def apply_permissions(path: pathlib.Path):
     """Apply PUID and PGID permissions to a file or directory if set"""
@@ -105,6 +105,8 @@ def copy_songs(selected_songs, export_format='folder', embed_covers=True, rename
                     # Export to MP3 with high quality (320 kbps)
                     flac_audio.export(target_path, format="mp3", bitrate="320k")
 
+                    # Copy metadata
+                    copy_meatdata(source, target_path)
                 else:
                     # Copy file
                     shutil.copy2(source, target_path)
