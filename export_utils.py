@@ -2,7 +2,7 @@ import os
 import shutil
 import pathlib
 import zipfile
-from pydub import AudioSegment
+import subprocess
 from datetime import datetime
 from config import EXPORT_DIR, PUID, PGID
 from audio_utils import get_artist_and_title, embed_cover, copy_meatdata
@@ -94,19 +94,25 @@ def copy_songs(selected_songs, export_format='folder', embed_covers=True, rename
                 # only convert flac
                 if song_downsampling and pathlib.Path(source).suffix.lower() == ".flac":
 
-                    # Load the FLAC file
-                    flac_audio = AudioSegment.from_file(source, format="flac")
-
                     # Change file extension / overwrite target_path
                     base, _ = os.path.splitext(target_filename)
                     target_filename = base + '.mp3'
                     target_path = os.path.join(export_folder, target_filename)
 
                     # Export to MP3 with high quality (320 kbps)
-                    flac_audio.export(target_path, format="mp3", bitrate="320k")
-
-                    # Copy metadata
-                    copy_meatdata(source, target_path)
+                    subprocess.run([
+                        "ffmpeg",
+                        "-y",
+                        "-i", source,
+                        "-map", "0:a",
+                        "-map", "0:v?",
+                        "-map_metadata", "0",
+                        "-codec:v", "copy",
+                        "-codec:a", "libmp3lame",
+                        "-b:a", "320k",
+                        "-id3v2_version", "3",
+                        target_path
+                    ], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
                     # Delete the source if in place update
                     if os.path.dirname(source) == os.path.dirname(target_path):
