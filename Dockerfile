@@ -1,7 +1,7 @@
 FROM python:3.14-slim
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y sqlite3 zlib1g-dev libjpeg-dev gcc ffmpeg \
+RUN apt-get update && apt-get install -y --no-install-recommends flac lame sqlite3 \
     && rm -rf /var/lib/apt/lists/*
 
 # Set working directory

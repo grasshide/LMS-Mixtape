@@ -1,4 +1,5 @@
 import os
+import time
 import shutil
 import pathlib
 import zipfile
@@ -99,20 +100,35 @@ def copy_songs(selected_songs, export_format='folder', embed_covers=True, rename
                     target_filename = base + '.mp3'
                     target_path = os.path.join(export_folder, target_filename)
 
-                    # Export to MP3 with high quality (320 kbps)
-                    subprocess.run([
-                        "ffmpeg",
-                        "-y",
-                        "-i", source,
-                        "-map", "0:a",
-                        "-map", "0:v?",
-                        "-map_metadata", "0",
-                        "-codec:v", "copy",
-                        "-codec:a", "libmp3lame",
-                        "-b:a", "320k",
-                        "-id3v2_version", "3",
-                        target_path
-                    ], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                    start = time.time()
+
+                    # Export to MP3 with high quality
+                    start = time.time()
+
+                    # Start FLAC decoder (write PCM to stdout)
+                    flac_proc = subprocess.Popen(
+                        ["flac", "-dcs", "--", source],
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.DEVNULL,
+                    )
+
+                    # Start LAME encoder (read PCM from stdin)
+                    lame_proc = subprocess.run(
+                        ["lame", "-S", "-V", "0", "--vbr-new", "--add-id3v2", "--ignore-tag-errors", "-", target_path],
+                        stdin=flac_proc.stdout,
+                        stdout=subprocess.DEVNULL,
+                        stderr=subprocess.DEVNULL,
+                        check=True,
+                    )
+
+                    # Close the FLAC process's stdout to signal EOF
+                    flac_proc.stdout.close()
+                    flac_proc.wait()
+
+                    print(f"Downsampling took {time.time() - start:.2f} seconds")
+
+                    # Copy metadata
+                    copy_meatdata(source, target_path)
 
                     # Delete the source if in place update
                     if os.path.dirname(source) == os.path.dirname(target_path):

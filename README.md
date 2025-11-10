@@ -31,7 +31,7 @@ Like LMS, this program will not alter your library in any way. Only the exported
 - search results will be marked by a green dot if they already exist in the sync folder (format agnostic)
 - ***new:*** the sync folder is now browsable thorough the UI and songs can be deleted
 - ***new:*** the web interface uses a single screen view on larger screens
-- ***new:*** downsampling from FLAC to 320kbps with in place conversion for the sync folder
+- ***new:*** downsampling from FLAC to MP3 (v0) with in place conversion for the sync folder
 
 
 ## Requirements
