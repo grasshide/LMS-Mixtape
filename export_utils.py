@@ -1,5 +1,4 @@
 import os
-import time
 import shutil
 import pathlib
 import zipfile
@@ -100,11 +99,6 @@ def copy_songs(selected_songs, export_format='folder', embed_covers=True, rename
                     target_filename = base + '.mp3'
                     target_path = os.path.join(export_folder, target_filename)
 
-                    start = time.time()
-
-                    # Export to MP3 with high quality
-                    start = time.time()
-
                     # Start FLAC decoder (write PCM to stdout)
                     flac_proc = subprocess.Popen(
                         ["flac", "-dcs", "--", source],
@@ -124,8 +118,6 @@ def copy_songs(selected_songs, export_format='folder', embed_covers=True, rename
                     # Close the FLAC process's stdout to signal EOF
                     flac_proc.stdout.close()
                     flac_proc.wait()
-
-                    print(f"Downsampling took {time.time() - start:.2f} seconds")
 
                     # Copy metadata
                     copy_meatdata(source, target_path)

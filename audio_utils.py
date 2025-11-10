@@ -214,6 +214,11 @@ def copy_meatdata(source, target):
     # Write tags to the new MP3 file
     mp3 = EasyID3(target)
 
+    # Remove "encodersettings" field (added by LAME)
+    if "encoder" in mp3:
+        print("remove encodersettings")
+        del mp3["encoder"]
+
     # Only copy keys that EasyID3 supports
     valid_keys = set(EasyID3.valid_keys.keys())
     for key, value in flac_tags.tags.items():
@@ -222,12 +227,17 @@ def copy_meatdata(source, target):
             mp3[key_lower] = value
     mp3.save()
 
-    # Add cover art (if present)
+
     try:
         mp3_id3 = ID3(target)
     except ID3NoHeaderError:
         mp3_id3 = ID3()
 
+    # Delete the TSSE frame (encoder) added by lame
+    if 'TSSE' in mp3_id3:
+        del mp3_id3['TSSE']
+
+    # Add cover art (if present)
     for picture in flac_tags.pictures:
         mp3_id3.add(APIC(
             encoding=3,       # UTF-8
