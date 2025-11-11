@@ -60,9 +60,10 @@ def api_query():
                     print(f"[DEBUG] 4. Checking for file in sync folder: {renamed_mp3_path}")
                     if os.path.isfile(mp3_path) or os.path.isfile(renamed_mp3_path):
                         exists = True
-                except Exception:
+                except Exception as e:
+                    print(f"[DEBUG] Error checking file existence: {e}")
                     exists = False
-                print(f"[DEBUG] 5. song in sync folder: {exists})")
+                print(f"[DEBUG] 5. song in sync folder: {exists}")
                 song['exists_in_sync'] = exists
         else:
             for song in songs:
