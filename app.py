@@ -43,27 +43,20 @@ def api_query():
                     source_path = pathlib.Path(song['url'])
                     renamed_filename = create_target_filename(source_path, song['filename'], rename_files=True)
                     renamed_path = os.path.join(sync_dir, renamed_filename)
-                    print(f"[DEBUG] 1. Checking for file in sync folder: {renamed_path}")
                     if os.path.isfile(renamed_path):
                         exists = True
-                        continue
                     # Check original filename
                     original_path = os.path.join(sync_dir, song['filename'])
-                    print(f"[DEBUG] 2. Checking for file in sync folder: {original_path}")
                     if os.path.isfile(original_path):
                         exists = True
-                        continue
                     # Additionally check for mp3
                     mp3_path = os.path.join(sync_dir, os.path.splitext(song['filename'])[0] + '.mp3')
-                    print(f"[DEBUG] 3. Checking for file in sync folder: {mp3_path}")
                     renamed_mp3_path = os.path.join(sync_dir, os.path.splitext(renamed_filename)[0] + '.mp3')
-                    print(f"[DEBUG] 4. Checking for file in sync folder: {renamed_mp3_path}")
                     if os.path.isfile(mp3_path) or os.path.isfile(renamed_mp3_path):
                         exists = True
                 except Exception as e:
-                    print(f"[DEBUG] Error checking file existence: {e}")
+                    print(f"[ERROR] Checking file existence: {e}")
                     exists = False
-                print(f"[DEBUG] 5. song in sync folder: {exists}")
                 song['exists_in_sync'] = exists
         else:
             for song in songs:
