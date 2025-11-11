@@ -39,13 +39,23 @@ def api_query():
             for song in songs:
                 exists = False
                 try:
+                    # Check renamed filename (default export behavior)
                     source_path = pathlib.Path(song['url'])
-                    # Check renamed filename variant (default export behavior)
                     renamed_filename = create_target_filename(source_path, song['filename'], rename_files=True)
                     renamed_path = os.path.join(sync_dir, renamed_filename)
                     print(f"[DEBUG] Checking for file in sync folder: {renamed_path} (original: {song['filename']})")
+                    if os.path.isfile(renamed_path):
+                        exists = True
+                        continue
+                    # Check original filename
                     original_path = os.path.join(sync_dir, song['filename'])
-                    if os.path.isfile(renamed_path) or os.path.isfile(original_path):
+                    if os.path.isfile(original_path):
+                        exists = True
+                        continue
+                    # Additionally check for mp3
+                    mp3_path = os.path.join(sync_dir, os.path.splitext(song['filename'])[0] + '.mp3')
+                    renamed_mp3_path = os.path.join(sync_dir, os.path.splitext(renamed_filename)[0] + '.mp3')
+                    if os.path.isfile(mp3_path) or os.path.isfile(renamed_mp3_path):
                         exists = True
                 except Exception:
                     exists = False

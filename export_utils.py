@@ -7,7 +7,7 @@ from datetime import datetime
 from config import EXPORT_DIR, PUID, PGID
 from audio_utils import get_artist_and_title, embed_cover, copy_meatdata
 
-def apply_permissions(path: pathlib.Path):
+def apply_permissions(path):
     """Apply PUID and PGID permissions to a file or directory if set"""
     if PUID is None or PGID is None:
         return  # Skip if PUID or PGID are not set
