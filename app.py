@@ -1,5 +1,5 @@
 import os
-import pathlib
+from pathlib import Path
 import io
 from flask import Flask, render_template, request, jsonify, send_file, abort, Response
 from PIL import Image, ImageOps
@@ -33,31 +33,41 @@ def api_query():
         
         songs = query_songs(rating, limit, exclude_genres, dyn_ps_val, album_limit, order_by, added_before)
 
+
         # Mark songs that already exist in the sync folder
-        sync_dir = os.path.join(EXPORT_DIR, "sync")
-        if os.path.isdir(sync_dir):
+        sync_dir = Path(EXPORT_DIR) / "sync"
+
+        if sync_dir.is_dir():
             for song in songs:
-                exists = False
+                song['exists_in_sync'] = False
                 try:
                     # Check renamed filename (default export behavior)
-                    source_path = pathlib.Path(song['url'])
+                    source_path = Path(song['url'])
                     renamed_filename = create_target_filename(source_path, song['filename'], rename_files=True)
-                    renamed_path = os.path.join(sync_dir, renamed_filename)
-                    if os.path.isfile(renamed_path):
-                        exists = True
+                    renamed_path = sync_dir / renamed_filename
+
+                    if renamed_path.is_file():
+                        song['exists_in_sync'] = True
+
                     # Check original filename
-                    original_path = os.path.join(sync_dir, song['filename'])
-                    if os.path.isfile(original_path):
-                        exists = True
-                    # Additionally check for mp3
-                    mp3_path = os.path.join(sync_dir, os.path.splitext(song['filename'])[0] + '.mp3')
-                    renamed_mp3_path = os.path.join(sync_dir, os.path.splitext(renamed_filename)[0] + '.mp3')
-                    if os.path.isfile(mp3_path) or os.path.isfile(renamed_mp3_path):
-                        exists = True
+                    original_path = sync_dir / song['filename']
+                    if original_path.is_file():
+                        song['exists_in_sync'] = True
+
+                    # Additionally check for mp3 (if original file is not mp3)
+                    if source_path.suffix.lower() != '.mp3':
+                        base_name = Path(song['filename']).stem
+                        renamed_base = Path(renamed_filename).stem
+
+                        mp3_path = sync_dir / f"{base_name}.mp3"
+                        renamed_mp3_path = sync_dir / f"{renamed_base}.mp3"
+
+                        if mp3_path.is_file() or renamed_mp3_path.is_file():
+                            song['exists_in_sync'] = True
+
                 except Exception as e:
                     print(f"[ERROR] Checking file existence: {e}")
-                    exists = False
-                song['exists_in_sync'] = exists
+                
         else:
             for song in songs:
                 song['exists_in_sync'] = False
@@ -93,7 +103,7 @@ def api_sync_list():
                 continue
             
             # Extract metadata from audio file
-            source_path = pathlib.Path(path)
+            source_path = Path(path)
             metadata = get_audio_metadata(source_path)
             
             # Build a song-like object to reuse renderer
@@ -209,7 +219,7 @@ def api_cover():
     file_path = request.args.get('path')
     if not file_path:
         abort(400, description='Missing path parameter')
-    song_path = pathlib.Path(file_path)
+    song_path = Path(file_path)
     if not song_path.exists():
         abort(404, description='Song file not found')
     parent_dir = song_path.parent
