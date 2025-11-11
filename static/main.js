@@ -84,6 +84,7 @@ function renderSongs() {
                     <span class="meta-item" role="listitem"><span class="meta-label">Album</span><span class="meta-value">${trimCustom(song.album) || 'Unknown Album'}</span></span>
                     ${song.year ? `<span class="meta-item" role="listitem"><span class="meta-label">Year</span><span class="meta-value">${song.year}</span></span>` : ''}
                     ${song.filesize != null ? `<span class="meta-item" role="listitem"><span class="meta-value">${song.filesize}</span><span class="meta-label">MB</span></span>` : ''}
+                    ${song.filetype != null ? `<span class="meta-item" role="listitem"><span class="meta-label">${song.filetype}</span></span>` : ''}
                     ${song.dyn_ps_val !== null && song.dyn_ps_val !== 0 ? `<span class="meta-item" role="listitem"><span class="meta-label">Dynamic</span><span class="meta-value">${song.dyn_ps_val}</span></span>` : ''}
                 </div>
             </div>

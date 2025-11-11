@@ -451,6 +451,7 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.3px;
     color: #666;
+    display: contents;
 }
 
 .song-details .meta-value {

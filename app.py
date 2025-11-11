@@ -139,7 +139,8 @@ def api_sync_list():
                 'dyn_ps_val': None,
                 'filename': name,
                 'cover_url': cover_url,
-                'filesize': filesize
+                'filesize': filesize,
+                'filetype': source_path.suffix.upper().lstrip('.')
             })
 
         return jsonify({'success': True, 'songs': items, 'count': len(items)})
