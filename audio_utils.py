@@ -2,10 +2,10 @@ import os
 import pathlib
 import base64
 from mutagen.easyid3 import EasyID3
-from mutagen.flac import FLAC
+from mutagen.flac import FLAC, Picture
 from mutagen import File
 from mutagen.mp3 import MP3
-from mutagen.id3 import ID3, APIC, error
+from mutagen.id3 import ID3, APIC, error, ID3NoHeaderError
 
 def get_artist_and_title(source_file):
     """Extract artist and title from music file tags"""
@@ -106,7 +106,6 @@ def add_mp3_cover(filename, album_art):
 def add_flac_cover(filename, album_art):
     """Add cover art to FLAC file"""
     try:
-        from mutagen.flac import Picture
         audio = File(filename)
         image = Picture()
         image.type = 3
@@ -127,6 +126,7 @@ def add_flac_cover(filename, album_art):
 
 def has_embedded_cover(file_path):
     """Check if a music file already has embedded cover art"""
+    file_path = pathlib.Path(file_path)
     try:
         if file_path.suffix == '.mp3':
             audio = MP3(file_path, ID3=ID3)
@@ -194,7 +194,6 @@ def extract_embedded_cover(file_path):
                         pass
                 if 'metadata_block_picture' in flac.tags and flac.tags['metadata_block_picture']:
                     try:
-                        from mutagen.flac import Picture
                         data_b64 = flac.tags['metadata_block_picture'][0]
                         pic = Picture()
                         pic.parse(base64.b64decode(data_b64))
@@ -206,8 +205,53 @@ def extract_embedded_cover(file_path):
         print(f"Error extracting embedded cover from {file_path}: {e}")
     return None, None
 
+def copy_meatdata(source, target):
+    """copy metadata as well as the cover (if present) from flac to mp3
+    """
+    # Read tags and cover art from the FLAC file
+    flac_tags = FLAC(source)
+
+    # Write tags to the new MP3 file
+    mp3 = EasyID3(target)
+
+    # Remove "encodersettings" field (added by LAME)
+    if "encoder" in mp3:
+        print("remove encodersettings")
+        del mp3["encoder"]
+
+    # Only copy keys that EasyID3 supports
+    valid_keys = set(EasyID3.valid_keys.keys())
+    for key, value in flac_tags.tags.items():
+        key_lower = key.lower()
+        if key_lower in valid_keys:
+            mp3[key_lower] = value
+    mp3.save()
+
+
+    try:
+        mp3_id3 = ID3(target)
+    except ID3NoHeaderError:
+        mp3_id3 = ID3()
+
+    # Delete the TSSE frame (encoder) added by lame
+    if 'TSSE' in mp3_id3:
+        del mp3_id3['TSSE']
+
+    # Add cover art (if present)
+    for picture in flac_tags.pictures:
+        mp3_id3.add(APIC(
+            encoding=3,       # UTF-8
+            mime=picture.mime,
+            type=3,           # Cover (front)
+            desc="Cover",
+            data=picture.data
+        ))
+    mp3_id3.save()
+
+
 def embed_cover(source_path, target):
     """Embed cover art into music file if no cover is already embedded"""
+    target = pathlib.Path(target)
     # Check if target file already has embedded cover
     if has_embedded_cover(target):
         return  # Skip if cover is already embedded
@@ -226,9 +270,9 @@ def embed_cover(source_path, target):
         return
     
     try:
-        if source_path.suffix == '.mp3':
+        if target.suffix == '.mp3':
             add_mp3_cover(target, str(cover))
-        elif source_path.suffix == '.flac':
+        elif target.suffix == '.flac':
             add_flac_cover(target, str(cover))
     except Exception as e:
         print(f"Error embedding cover: {e}") 

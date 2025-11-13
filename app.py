@@ -1,5 +1,4 @@
-import os
-import pathlib
+from pathlib import Path
 import io
 from flask import Flask, render_template, request, jsonify, send_file, abort, Response
 from PIL import Image, ImageOps
@@ -33,23 +32,41 @@ def api_query():
         
         songs = query_songs(rating, limit, exclude_genres, dyn_ps_val, album_limit, order_by, added_before)
 
+
         # Mark songs that already exist in the sync folder
-        sync_dir = os.path.join(EXPORT_DIR, "sync")
-        if os.path.isdir(sync_dir):
+        sync_dir = Path(EXPORT_DIR) / "sync"
+
+        if sync_dir.is_dir():
             for song in songs:
-                exists = False
+                song['exists_in_sync'] = False
                 try:
-                    source_path = pathlib.Path(song['url'])
-                    # Check renamed filename variant (default export behavior)
+                    # Check renamed filename (default export behavior)
+                    source_path = Path(song['url'])
                     renamed_filename = create_target_filename(source_path, song['filename'], rename_files=True)
-                    renamed_path = os.path.join(sync_dir, renamed_filename)
-                    print(f"[DEBUG] Checking for file in sync folder: {renamed_path} (original: {song['filename']})")
-                    original_path = os.path.join(sync_dir, song['filename'])
-                    if os.path.isfile(renamed_path) or os.path.isfile(original_path):
-                        exists = True
-                except Exception:
-                    exists = False
-                song['exists_in_sync'] = exists
+                    renamed_path = sync_dir / renamed_filename
+
+                    if renamed_path.is_file():
+                        song['exists_in_sync'] = True
+
+                    # Check original filename
+                    original_path = sync_dir / song['filename']
+                    if original_path.is_file():
+                        song['exists_in_sync'] = True
+
+                    # Additionally check for mp3 (if original file is not mp3)
+                    if source_path.suffix.lower() != '.mp3':
+                        base_name = Path(song['filename']).stem
+                        renamed_base = Path(renamed_filename).stem
+
+                        mp3_path = sync_dir / f"{base_name}.mp3"
+                        renamed_mp3_path = sync_dir / f"{renamed_base}.mp3"
+
+                        if mp3_path.is_file() or renamed_mp3_path.is_file():
+                            song['exists_in_sync'] = True
+
+                except Exception as e:
+                    print(f"[ERROR] Checking file existence: {e}")
+                
         else:
             for song in songs:
                 song['exists_in_sync'] = False
@@ -69,39 +86,38 @@ def api_query():
 def api_sync_list():
     """List audio files in the fixed sync folder"""
     try:
-        sync_dir = os.path.join(EXPORT_DIR, "sync")
-        if not os.path.isdir(sync_dir):
+        sync_dir = Path(EXPORT_DIR) / "sync"
+        if not sync_dir.is_dir():
             return jsonify({'success': True, 'songs': [], 'count': 0})
 
         allowed_exts = {'.mp3', '.flac', '.wav', '.ogg', '.opus', '.aac'}
         items = []
         import urllib.parse
-        for name in sorted(os.listdir(sync_dir)):
-            path = os.path.join(sync_dir, name)
-            if not os.path.isfile(path):
+        for path in sorted(sync_dir.iterdir(), key=lambda p: p.name):
+            if not path.is_file():
                 continue
-            ext = os.path.splitext(name)[1].lower()
+            ext = path.suffix.lower()
             if ext not in allowed_exts:
                 continue
             
             # Extract metadata from audio file
-            source_path = pathlib.Path(path)
-            metadata = get_audio_metadata(source_path)
+            metadata = get_audio_metadata(path)
             
             # Build a song-like object to reuse renderer
-            url = path
+            url = str(path)
             cover_url = f"/api/cover?path={urllib.parse.quote(url)}"
+            filesize = round(path.stat().st_size / (1024 * 1024), 0)
             
             # Use extracted metadata if available, otherwise fall back to filename
             if metadata:
-                title = metadata.get('title', '') or os.path.splitext(name)[0]
+                title = metadata.get('title', '') or path.stem
                 artist = metadata.get('artist', '') or 'Unknown Artist'
                 album = metadata.get('album', '') or 'Unknown Album'
                 genre = metadata.get('genre', '') or ''
                 year = metadata.get('year')
             else:
                 # Fallback to filename-based values if metadata extraction fails
-                title = os.path.splitext(name)[0]
+                title = path.stem
                 artist = 'Unknown Artist'
                 album = 'Unknown Album'
                 genre = ''
@@ -118,13 +134,16 @@ def api_sync_list():
                 'year': year,
                 'album': album,
                 'dyn_ps_val': None,
-                'filename': name,
-                'cover_url': cover_url
+                'filename': path.name,
+                'cover_url': cover_url,
+                'filesize': filesize,
+                'filetype': path.suffix.upper().lstrip('.')
             })
 
         return jsonify({'success': True, 'songs': items, 'count': len(items)})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
+
 
 @app.route('/api/sync/delete', methods=['POST'])
 def api_sync_delete():
@@ -135,17 +154,20 @@ def api_sync_delete():
         if not filename:
             return jsonify({'success': False, 'error': 'Missing filename'}), 400
 
-        sync_dir = os.path.join(EXPORT_DIR, "sync")
-        target_path = os.path.abspath(os.path.join(sync_dir, filename))
-        sync_dir_abs = os.path.abspath(sync_dir)
+        sync_dir = Path(EXPORT_DIR) / "sync"
+        target_path = (sync_dir / filename).resolve()
+        sync_dir_abs = sync_dir.resolve()
 
         # Safety: ensure target resides in sync directory
-        if not target_path.startswith(sync_dir_abs + os.sep):
+        try:
+            target_path.relative_to(sync_dir_abs)
+        except Exception:
             return jsonify({'success': False, 'error': 'Invalid path'}), 400
-        if not os.path.isfile(target_path):
+
+        if not target_path.is_file():
             return jsonify({'success': False, 'error': 'File not found'}), 404
 
-        os.remove(target_path)
+        target_path.unlink()
         return jsonify({'success': True})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
@@ -159,6 +181,7 @@ def api_export():
         export_format = data.get('format', 'folder')
         embed_covers = data.get('embed_covers', True)
         rename_files = data.get('rename_files', True)
+        song_downsampling = data.get('song_downsampling', False)
         sync_folder = data.get('sync_folder', False)
         
         if not selected_songs:
@@ -167,7 +190,7 @@ def api_export():
                 'error': 'No songs selected'
             }), 400
         
-        result_path = copy_songs(selected_songs, export_format, embed_covers, rename_files, sync_folder)
+        result_path = copy_songs(selected_songs, export_format, embed_covers, rename_files, song_downsampling, sync_folder)
         
         return jsonify({
             'success': True,
@@ -184,9 +207,9 @@ def api_export():
 def download_file(filename):
     """Download exported files"""
     try:
-        file_path = os.path.join(EXPORT_DIR, filename)
-        if os.path.exists(file_path):
-            return send_file(file_path, as_attachment=True)
+        file_path = Path(EXPORT_DIR) / filename
+        if file_path.exists():
+            return send_file(str(file_path), as_attachment=True)
         else:
             return jsonify({'error': 'File not found'}), 404
     except Exception as e:
@@ -198,7 +221,7 @@ def api_cover():
     file_path = request.args.get('path')
     if not file_path:
         abort(400, description='Missing path parameter')
-    song_path = pathlib.Path(file_path)
+    song_path = Path(file_path)
     if not song_path.exists():
         abort(404, description='Song file not found')
     parent_dir = song_path.parent
@@ -239,8 +262,8 @@ def api_cover():
         except Exception:
             return Response(img_bytes, mimetype=mime)
     # Fallback to default cover image
-    default_cover = os.path.join('static', 'default-cover.png')
-    return send_file(default_cover, mimetype='image/png')
+    default_cover = Path('static') / 'default-cover.png'
+    return send_file(str(default_cover), mimetype='image/png')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=False) 

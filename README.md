@@ -27,10 +27,11 @@ Like LMS, this program will not alter your library in any way. Only the exported
 - genres can be excluded (e.g. Score, Classical, ...)
 - pick a date to rediscover your favorite songs added before that day
 - filter option for "dynamic played/skipped value" of the Alternative Play Count plugin
-- export to folder generates a new folder for each export or exports to a folder called "sync" (e.g. for syncthing)
-- search results will be marked by a green dot if they already exist in the sync folder
+- export to folder generates a new folder for each export or exports to a fixed folder called "sync folder" (e.g. for syncthing)
+- search results will be marked by a green dot if they already exist in the sync folder (format agnostic)
 - ***new:*** the sync folder is now browsable thorough the UI and songs can be deleted
 - ***new:*** the web interface uses a single screen view on larger screens
+- ***new:*** downsampling from FLAC to MP3 (v0) with in place conversion for the sync folder
 
 
 ## Requirements
