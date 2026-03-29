@@ -132,7 +132,7 @@ def query_songs(rating=40, limit=50, exclude_genres=None, dyn_ps_val=None, album
             albums.title,
             {dynpsval_select}
         FROM tracks
-        JOIN tracks_persistent ON tracks.url = tracks_persistent.url
+        JOIN tracks_persistent ON tracks.musicbrainz_id = tracks_persistent.musicbrainz_id
         JOIN genre_track ON tracks.id = genre_track.track
         JOIN genres ON genre_track.genre = genres.id
         JOIN contributor_track ON tracks.id = contributor_track.track
