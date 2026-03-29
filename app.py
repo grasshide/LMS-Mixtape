@@ -105,7 +105,7 @@ def api_sync_list():
             
             # Build a song-like object to reuse renderer
             url = str(path)
-            cover_url = f"/api/cover?path={urllib.parse.quote(url)}"
+            cover_url = f"/api/cover?path={urllib.parse.quote(url, safe='')}"
             filesize = round(path.stat().st_size / (1024 * 1024), 0)
             
             # Use extracted metadata if available, otherwise fall back to filename

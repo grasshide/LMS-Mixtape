@@ -98,10 +98,14 @@ function renderSongs() {
 }
 
 function trimCustom(value) {
-    if (value.length > 17) {
-        return value.slice(0, 17).trimEnd() + "...";
+    if (value == null || value === undefined) {
+        return '';
     }
-    return value;
+    const s = String(value);
+    if (s.length > 17) {
+        return s.slice(0, 17).trimEnd() + "...";
+    }
+    return s;
 }
 
 function renderRatingPicker(value) {

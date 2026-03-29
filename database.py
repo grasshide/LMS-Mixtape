@@ -154,7 +154,7 @@ def query_songs(rating=40, limit=50, exclude_genres=None, dyn_ps_val=None, album
         url = urllib.parse.unquote(url)
         
         # Add cover_url for frontend
-        cover_url = f"/api/cover?path={urllib.parse.quote(url)}"
+        cover_url = f"/api/cover?path={urllib.parse.quote(url, safe='')}"
         
         songs.append({
             'url': url,
